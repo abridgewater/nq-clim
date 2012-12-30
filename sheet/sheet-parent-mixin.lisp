@@ -14,17 +14,14 @@
 (defclass sheet-parent-mixin ()
   ((parent :initform nil :reader sheet-parent)))
 
-(defmethod sheet-adopt-child :around (sheet (child sheet-parent-mixin))
+(defmethod sheet-adopt-child (sheet (child sheet-parent-mixin))
   (when (sheet-parent child)
     (error 'sheet-already-has-parent :sheet child))
-  (call-next-method)
   (setf (slot-value child 'parent) sheet))
 
-(defmethod sheet-disown-child :around (sheet (child sheet-parent-mixin) &key (errorp t))
+(defmethod sheet-disown-child (sheet (child sheet-parent-mixin) &key (errorp t))
   (if (eq (sheet-parent child) sheet)
-      (progn
-        (call-next-method)
-        (setf (slot-value child 'parent) nil))
+      (setf (slot-value child 'parent) nil)
       (when errorp
         (error 'sheet-is-not-child :parent sheet :sheet child))))
 

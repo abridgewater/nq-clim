@@ -64,9 +64,9 @@
   (:method ((sheet sheet) child)
     (error "~S cannot adopt ~S because it does not support children"
            sheet child))
-  (:method :around (sheet (child sheet))
-           (error "~S cannot be adopted by ~S because it does not accept parenting"
-                  child sheet)))
+  (:method (sheet (child sheet))
+    (error "~S cannot be adopted by ~S because it does not accept parenting"
+           child sheet)))
 
 (defgeneric sheet-disown-child (sheet child &key errorp)
   (:documentation
@@ -77,9 +77,9 @@
   (:method ((sheet sheet) child &key (errorp t))
     (when errorp
       (error 'sheet-is-not-child :parent sheet :sheet child)))
-  (:method :around (sheet (child sheet) &key (errorp t))
-           (when errorp
-             (error 'sheet-is-not-child :parent sheet :sheet child))))
+  (:method (sheet (child sheet) &key (errorp t))
+    (when errorp
+      (error 'sheet-is-not-child :parent sheet :sheet child))))
 
 (defgeneric sheet-siblings (sheet)
   (:documentation
