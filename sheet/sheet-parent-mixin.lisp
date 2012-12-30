@@ -12,7 +12,7 @@
 (cl:in-package :nq-clim/sheet/sheet-parent-mixin)
 
 (defclass sheet-parent-mixin ()
-  ((parent :reader sheet-parent)))
+  ((parent :initform nil :reader sheet-parent)))
 
 (defmethod sheet-adopt-child :around (sheet (child sheet-parent-mixin))
   (when (sheet-parent child)
