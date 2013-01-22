@@ -148,6 +148,9 @@
   ;; suggests breadth-first search.  We'll go with depth-first.
   (:method (function (sheet sheet))
     (funcall function sheet)
-    (map 'nil function (sheet-children sheet))))
+    (map 'nil
+         (lambda (child)
+           (map-over-sheets function child))
+         (sheet-children sheet))))
 
 ;;; EOF
