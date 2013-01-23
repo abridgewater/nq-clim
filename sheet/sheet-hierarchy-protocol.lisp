@@ -53,7 +53,8 @@
 (defgeneric sheet-children (sheet)
   (:documentation
    "Return a list of the child sheets of SHEET; this list must not be
-   modified.")
+modified.  Some reading between the lines of the CLIM II spec suggests
+that this list must be in order from topmost to bottommost.")
   (:method ((sheet sheet))
     nil))
 
