@@ -33,7 +33,7 @@
 
 (defmacro with-bounding-rectangle* ((min-x min-y max-x max-y) region &body body)
   `(multiple-value-bind (,min-x ,min-y ,max-x ,max-y)
-       (bounding-rectangle* region)
+       (bounding-rectangle* ,region)
      ,@body))
 
 ;; FIXME: BOUNDING-RECTANGLE-POSITION goes here, but is defined to
