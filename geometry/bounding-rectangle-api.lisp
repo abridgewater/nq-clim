@@ -10,7 +10,7 @@
         :nq-clim/geometry/standard-bounding-rectangle)
   (:export
    "BOUNDING-RECTANGLE"
-   "WITH-BOUNDING-RECTANGLE"
+   "WITH-BOUNDING-RECTANGLE*"
    ;; "BOUNDING-RECTANGLE-POSITION"
    "BOUNDING-RECTANGLE-MIN-X"
    "BOUNDING-RECTANGLE-MIN-Y"
