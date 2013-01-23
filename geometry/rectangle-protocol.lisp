@@ -6,6 +6,7 @@
 
 (cl:defpackage :nq-clim/geometry/rectangle-protocol
   (:use :cl
+        :nq-clim/geometry/bounding-rectangle-protocol
         :nq-clim/geometry/region)
   (:export
    "RECTANGLE"
