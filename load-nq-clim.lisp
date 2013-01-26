@@ -31,6 +31,7 @@
                 "geometry/bounding-rectangle-api"
                 "geometry/identity-transformation"
                 "geometry/scaling-transformation"
+                "geometry/transformation-composition"
                 "sheet/sheet"
                 "sheet/sheet-hierarchy-protocol"
                 "sheet/sheet-multiple-child-mixin"
