@@ -44,6 +44,7 @@
                 "sheet/mirrored-sheet-mixin"
                 "port/port-protocol"
                 "port/basic-port"
+                "port/port-discovery"
                 "backend/clx/medium"))
   (load (compile-file file)))
 
