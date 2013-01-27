@@ -39,6 +39,7 @@
                 "sheet/sheet-parent-mixin"
                 "sheet/sheet-geometry-protocol"
                 "sheet/sheet-geometry-mixin"
+                "port/port"
                 "sheet/mirror-functions"
                 "sheet/mirrored-sheet-mixin"
                 "backend/clx/medium"))
