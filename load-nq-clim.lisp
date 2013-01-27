@@ -37,6 +37,8 @@
                 "sheet/sheet-hierarchy-protocol"
                 "sheet/sheet-multiple-child-mixin"
                 "sheet/sheet-parent-mixin"
+                "sheet/sheet-geometry-protocol"
+                "sheet/sheet-geometry-mixin"
                 "backend/clx/medium"))
   (load (compile-file file)))
 
