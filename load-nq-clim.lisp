@@ -43,6 +43,7 @@
                 "sheet/mirror-functions"
                 "sheet/mirrored-sheet-mixin"
                 "port/port-protocol"
+                "port/basic-port"
                 "backend/clx/medium"))
   (load (compile-file file)))
 
