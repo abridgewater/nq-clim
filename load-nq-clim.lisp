@@ -39,6 +39,8 @@
                 "sheet/sheet-parent-mixin"
                 "sheet/sheet-geometry-protocol"
                 "sheet/sheet-geometry-mixin"
+                "sheet/mirror-functions"
+                "sheet/mirrored-sheet-mixin"
                 "backend/clx/medium"))
   (load (compile-file file)))
 
