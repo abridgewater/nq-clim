@@ -6,7 +6,8 @@
 
 (cl:defpackage :nq-clim/sheet/mirrored-sheet-mixin
   (:use :cl
-        :nq-clim/sheet/mirror-functions)
+        :nq-clim/sheet/mirror-functions
+        :nq-clim/port/port)
   (:export
    "MIRRORED-SHEET-MIXIN"))
 (cl:in-package :nq-clim/sheet/mirrored-sheet-mixin)

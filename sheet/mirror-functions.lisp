@@ -7,7 +7,8 @@
 (cl:defpackage :nq-clim/sheet/mirror-functions
   (:use :cl
         :nq-clim/sheet/sheet
-        :nq-clim/sheet/sheet-hierarchy-protocol)
+        :nq-clim/sheet/sheet-hierarchy-protocol
+        :nq-clim/port/port)
   (:export
    "SHEET-DIRECT-MIRROR"
    "SHEET-MIRRORED-ANCESTOR"
@@ -44,7 +45,6 @@
 ;; (defgeneric raise-mirror (port sheet))
 ;; (defgeneric bury-mirror (port sheet))
 
-#+(or) ;; PORT generic function yet to be defined.
 (defmethod port ((sheet sheet))
   nil)
 
