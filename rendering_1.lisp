@@ -60,7 +60,6 @@
 
 
 (defvar *medium* nil "The CLIM MEDIUM we draw on.")
-(defvar *context* nil "The X graphics context we draw with.")
 
 
 (defun init-map-data ()
@@ -93,8 +92,6 @@
       (setf *position* (+ *position* *frontstep*))))
 
 (defun draw-line (x1 y1 x2 y2)
-  #+(or)
-  (xlib:draw-line *window* *context* x1 y1 x2 y2)
   (medium-draw-line* *medium* x1 y1 x2 y2))
 
 
@@ -153,10 +150,10 @@
   (xlib:clear-area *window* :x 0 :y 0 :width 256 :height 256 :exposures-p t))
 
 (defun create-gc (screen)
-  (setf *context* (xlib:create-gcontext :foreground (xlib:screen-black-pixel screen)
-					:background (xlib:screen-white-pixel screen)
-					:line-width 1 :cap-style :projecting
-					:drawable (xlib:screen-root screen))))
+  (xlib:create-gcontext :foreground (xlib:screen-black-pixel screen)
+                        :background (xlib:screen-white-pixel screen)
+                        :line-width 1 :cap-style :projecting
+                        :drawable (xlib:screen-root screen)))
 
 (defun run-event-loop ()
   (xlib:event-case
@@ -190,8 +187,9 @@
                       :min-width 256 :min-height 256
                       :max-width 256 :max-height 256)
                      :window-title "Dungeon Crawl -- Rendering 1")
-    (create-gc (xlib:display-default-screen *display*))
-    (setf *medium* (make-clx-medium *window* *context*))
+    (setf *medium*
+          (make-clx-medium *window*
+                           (create-gc (xlib:display-default-screen *display*))))
     (setf (xlib:window-event-mask *window*)
           (xlib:make-event-mask :button-press :button-release
                                 :exposure :key-press))
