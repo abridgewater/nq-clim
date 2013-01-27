@@ -33,6 +33,7 @@
                 "geometry/scaling-transformation"
                 "geometry/transformation-composition"
                 "sheet/sheet"
+                "sheet/sheet-notification-protocol"
                 "sheet/sheet-hierarchy-protocol"
                 "sheet/sheet-multiple-child-mixin"
                 "sheet/sheet-parent-mixin"
