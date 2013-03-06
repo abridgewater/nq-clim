@@ -45,6 +45,7 @@
                 "port/port-protocol"
                 "port/basic-port"
                 "port/port-discovery"
+                "backend/clx/port"
                 "backend/clx/medium"))
   (load (compile-file file)))
 
