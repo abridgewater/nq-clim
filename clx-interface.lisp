@@ -51,6 +51,15 @@
   ;; when next a GLX connection is made.
   (setf glx::*current-context* nil))
 
+(defun set-window-space-requirement (window space-requirement)
+  (multiple-value-bind
+        (width min-width max-width height max-height min-height)
+      (space-requirement-components space-requirement)
+    (setf (xlib:wm-normal-hints window)
+          (xlib:make-wm-size-hints
+           :width  width  :min-width  min-width  :max-width  max-width
+           :height height :min-height min-height :max-height max-height))))
+
 (defun init-display (&key display-name space-requirement window-title)
   (setf *display* (xlib:open-default-display display-name))
   #+(or)
@@ -89,13 +98,7 @@
 	  (or window-title *default-window-title*))
 
     (when space-requirement
-      (multiple-value-bind
-	    (width min-width max-width height max-height min-height)
-	  (space-requirement-components space-requirement)
-	(setf (xlib:wm-normal-hints window)
-	      (xlib:make-wm-size-hints
-	       :width  width  :min-width  min-width  :max-width  max-width
-	       :height height :min-height min-height :max-height max-height))))
+      (set-window-space-requirement window space-requirement))
     (xlib:map-window window)
 
     ;; Set up a GLX context for us to use.
