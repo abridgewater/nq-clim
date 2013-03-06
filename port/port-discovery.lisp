@@ -48,7 +48,10 @@ object corresponding to the server path passed as parameters."))
      (lambda (port)
        (when (equal server-path (port-server-path port))
          (return-from find-port port))))
-    (push (apply #'create-port (car server-path) initargs)
-          *all-ports*)))
+    (let ((port (apply #'create-port (car server-path)
+                 :server-path server-path
+                 initargs)))
+      (push port *all-ports*)
+      port)))
 
 ;;; EOF
