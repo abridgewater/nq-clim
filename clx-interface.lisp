@@ -5,8 +5,13 @@
 ;;;
 
 (cl:defpackage :game-stuff/clx-interface
-  (:use :cl :nq-clim/layout/space-requirement)
+  (:use :cl
+        :nq-clim/layout/space-requirement
+        :nq-clim/port/port-discovery
+        :nq-clim/port/port-protocol
+        :nq-clim/backend/clx/port)
   (:export
+   "*PORT*"
    "*DISPLAY*"
    "*WINDOW*"
    "WITH-X11-DISPLAY"
@@ -22,6 +27,7 @@
 
 ;;; Important external variables.
 
+(defvar *port* nil "The CLIM PORT.")
 (defvar *display* nil "The X display connection.")
 (defvar *window* nil "The X window we draw in.")
 
@@ -50,7 +56,10 @@
            :height height :min-height min-height :max-height max-height))))
 
 (defun init-display (&key display-name space-requirement window-title)
-  (setf *display* (xlib:open-default-display display-name))
+  (setf *port*
+        (find-port :server-path `(:clx ,@(when display-name
+                                               `(:display ,display-name)))))
+  (setf *display* (clx-port-display *port*))
   (let* ((screen (xlib:display-default-screen *display*))
 	 (root (xlib:screen-root screen))
 	 (black-pixel (xlib:screen-black-pixel screen))
@@ -79,9 +88,10 @@
   ;; It is sufficient to drop the reference to *window*, as closing
   ;; the display automatically releases all server resources.
   (setf *window* nil)
-  (when *display*
-    (xlib:close-display *display*))
-  (setf *display* nil))
+  (setf *display* nil)
+  (when *port*
+    (destroy-port *port*))
+  (setf *port* nil))
 
 (defun call-with-x11-display (fun &key display-name space-requirement
 			      window-title)
