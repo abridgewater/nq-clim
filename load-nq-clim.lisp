@@ -15,7 +15,6 @@
 ;; of.  I'd far rather have hard build failure in such cases.
 
 (dolist (file '("layout/space-requirement"
-                "clx-interface"
                 "medium/medium"
                 "medium/drawing"
                 "medium/basic-medium"
@@ -47,7 +46,8 @@
                 "port/port-discovery"
                 "backend/clx/port"
                 "backend/clx/graft"
-                "backend/clx/medium"))
+                "backend/clx/medium"
+                "clx-interface"))
   (load (compile-file file)))
 
 ;;; EOF
