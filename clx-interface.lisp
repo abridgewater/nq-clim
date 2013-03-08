@@ -62,8 +62,6 @@
   (setf *display* (clx-port-display *port*))
   (let* ((screen (xlib:display-default-screen *display*))
 	 (root (xlib:screen-root screen))
-	 (black-pixel (xlib:screen-black-pixel screen))
-         (white-pixel (xlib:screen-white-pixel screen))
 	 (width (or (and space-requirement
 			 (space-requirement-width space-requirement))
 		    *default-window-width*))
@@ -71,11 +69,16 @@
 			  (space-requirement-height space-requirement))
 		     *default-window-height*))
 	 (window (xlib:create-window :parent root
-				     :x 0 :y 0 :width width :height height
-				     :background white-pixel
-				     :border black-pixel
-				     :event-mask '(:exposure))))
+				     :x 0 :y 0 :width width :height height)))
     (setf *window* window)
+
+    (setf (xlib:window-background *window*)
+          (xlib:screen-white-pixel
+           (xlib:display-default-screen
+            (clx-port-display *port*))))
+
+    (setf (xlib:window-event-mask *window*)
+          (xlib:make-event-mask :exposure))
 
     (setf (xlib:wm-name window)
 	  (or window-title *default-window-title*))
