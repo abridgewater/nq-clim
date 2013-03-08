@@ -21,10 +21,10 @@
 ;; The superclass list here is subject to revision, as I'm still
 ;; trying to find my way through the mess of mixins and
 ;; responsibilities in the sheet classes and protocols.
-(defclass clx-graft (sheet
-                     sheet-multiple-child-mixin
+(defclass clx-graft (sheet-multiple-child-mixin
                      mirrored-sheet-mixin
-                     sheet-geometry-mixin)
+                     sheet-geometry-mixin
+                     sheet)
   ())
 
 (defmethod realize-mirror ((port clx-port) (mirrored-sheet clx-graft))
