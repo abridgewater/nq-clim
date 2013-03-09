@@ -85,34 +85,34 @@
   ;; KLUDGE: NOT the defined right way to obtain a graft, but it's
   ;; what we have available at the moment.
   (setf *graft* (make-clx-graft *port*))
-  (let* ((width (or (and space-requirement
-			 (space-requirement-width space-requirement))
-		    *default-window-width*))
-	 (height (or (and space-requirement
-			  (space-requirement-height space-requirement))
-		     *default-window-height*)))
 
-    (setf *sheet* (make-instance 'clx-interface-sheet))
-    (setf (sheet-transformation *sheet*) +identity-transformation+)
-    (resize-sheet *sheet* width height)
-    (sheet-adopt-child *graft* *sheet*)
+  (setf *sheet* (make-instance 'clx-interface-sheet))
+  (setf (sheet-transformation *sheet*) +identity-transformation+)
+  (let ((width (or (and space-requirement
+                        (space-requirement-width space-requirement))
+                   *default-window-width*))
+        (height (or (and space-requirement
+                         (space-requirement-height space-requirement))
+                    *default-window-height*)))
+    (resize-sheet *sheet* width height))
+  (sheet-adopt-child *graft* *sheet*)
 
-    (setf *window* (realize-mirror *port* *sheet*))
+  (setf *window* (realize-mirror *port* *sheet*))
 
-    (setf (xlib:window-background *window*)
-          (xlib:screen-white-pixel
-           (xlib:display-default-screen
-            (clx-port-display *port*))))
+  (setf (xlib:window-background *window*)
+        (xlib:screen-white-pixel
+         (xlib:display-default-screen
+          (clx-port-display *port*))))
 
-    (setf (xlib:window-event-mask *window*)
-          (xlib:make-event-mask :exposure))
+  (setf (xlib:window-event-mask *window*)
+        (xlib:make-event-mask :exposure))
 
-    (setf (xlib:wm-name *window*)
-	  (or window-title *default-window-title*))
+  (setf (xlib:wm-name *window*)
+        (or window-title *default-window-title*))
 
-    (when space-requirement
-      (set-window-space-requirement *window* space-requirement))
-    (xlib:map-window *window*)))
+  (when space-requirement
+    (set-window-space-requirement *window* space-requirement))
+  (xlib:map-window *window*))
 
 (defun close-display ()
   ;; It is sufficient to drop the reference to *window*, as closing
