@@ -8,6 +8,13 @@
   (:use :cl
         :nq-clim/layout/space-requirement
         :nq-clim/sheet/mirror-functions
+        :nq-clim/sheet/sheet-geometry-protocol
+        :nq-clim/sheet/sheet-geometry-mixin
+        :nq-clim/sheet/sheet-parent-mixin
+        :nq-clim/sheet/sheet-hierarchy-protocol
+        :nq-clim/sheet/sheet
+        :nq-clim/sheet/mirrored-sheet-mixin
+        :nq-clim/geometry/identity-transformation
         :nq-clim/port/port-discovery
         :nq-clim/port/port-protocol
         :nq-clim/backend/clx/port
@@ -16,6 +23,7 @@
    "*PORT*"
    "*GRAFT*"
    "*DISPLAY*"
+   "*SHEET*"
    "*WINDOW*"
    "WITH-X11-DISPLAY"
 
@@ -32,6 +40,7 @@
 
 (defvar *port* nil "The CLIM PORT.")
 (defvar *graft* nil "The CLIM GRAFT.")
+(defvar *sheet* nil "The CLIM SHEET.")
 (defvar *display* nil "The X display connection.")
 (defvar *window* nil "The X window we draw in.")
 
@@ -48,6 +57,15 @@
 (defparameter *default-window-height* 240)
 (defparameter *default-window-width* 256)
 (defparameter *default-window-title* "CLX Interface Window")
+
+
+;; A placeholder SHEET class.
+
+(defclass clx-interface-sheet (mirrored-sheet-mixin
+                               sheet-parent-mixin
+                               sheet-geometry-mixin
+                               sheet)
+  ())
 
 
 (defun set-window-space-requirement (window space-requirement)
@@ -72,10 +90,14 @@
 		    *default-window-width*))
 	 (height (or (and space-requirement
 			  (space-requirement-height space-requirement))
-		     *default-window-height*))
-	 (window (xlib:create-window :parent (sheet-direct-mirror *graft*)
-				     :x 0 :y 0 :width width :height height)))
-    (setf *window* window)
+		     *default-window-height*)))
+
+    (setf *sheet* (make-instance 'clx-interface-sheet))
+    (setf (sheet-transformation *sheet*) +identity-transformation+)
+    (resize-sheet *sheet* width height)
+    (sheet-adopt-child *graft* *sheet*)
+
+    (setf *window* (realize-mirror *port* *sheet*))
 
     (setf (xlib:window-background *window*)
           (xlib:screen-white-pixel
@@ -97,6 +119,7 @@
   ;; the display automatically releases all server resources.
   (setf *window* nil)
   (setf *display* nil)
+  (setf *sheet* nil)
   (setf *graft* nil)
   (when *port*
     (destroy-port *port*))
