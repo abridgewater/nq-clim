@@ -47,6 +47,7 @@
                 "backend/clx/port"
                 "backend/clx/graft"
                 "backend/clx/medium"
+                "backend/clx/mirror"
                 "clx-interface"))
   (load (compile-file file)))
 
