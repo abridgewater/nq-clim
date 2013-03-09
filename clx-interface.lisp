@@ -7,11 +7,14 @@
 (cl:defpackage :game-stuff/clx-interface
   (:use :cl
         :nq-clim/layout/space-requirement
+        :nq-clim/sheet/mirror-functions
         :nq-clim/port/port-discovery
         :nq-clim/port/port-protocol
-        :nq-clim/backend/clx/port)
+        :nq-clim/backend/clx/port
+        :nq-clim/backend/clx/graft)
   (:export
    "*PORT*"
+   "*GRAFT*"
    "*DISPLAY*"
    "*WINDOW*"
    "WITH-X11-DISPLAY"
@@ -28,6 +31,7 @@
 ;;; Important external variables.
 
 (defvar *port* nil "The CLIM PORT.")
+(defvar *graft* nil "The CLIM GRAFT.")
 (defvar *display* nil "The X display connection.")
 (defvar *window* nil "The X window we draw in.")
 
@@ -60,15 +64,16 @@
         (find-port :server-path `(:clx ,@(when display-name
                                                `(:display ,display-name)))))
   (setf *display* (clx-port-display *port*))
-  (let* ((screen (xlib:display-default-screen *display*))
-	 (root (xlib:screen-root screen))
-	 (width (or (and space-requirement
+  ;; KLUDGE: NOT the defined right way to obtain a graft, but it's
+  ;; what we have available at the moment.
+  (setf *graft* (make-clx-graft *port*))
+  (let* ((width (or (and space-requirement
 			 (space-requirement-width space-requirement))
 		    *default-window-width*))
 	 (height (or (and space-requirement
 			  (space-requirement-height space-requirement))
 		     *default-window-height*))
-	 (window (xlib:create-window :parent root
+	 (window (xlib:create-window :parent (sheet-direct-mirror *graft*)
 				     :x 0 :y 0 :width width :height height)))
     (setf *window* window)
 
@@ -92,6 +97,7 @@
   ;; the display automatically releases all server resources.
   (setf *window* nil)
   (setf *display* nil)
+  (setf *graft* nil)
   (when *port*
     (destroy-port *port*))
   (setf *port* nil))
