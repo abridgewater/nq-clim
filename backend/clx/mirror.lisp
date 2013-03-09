@@ -23,4 +23,8 @@
                           :width (- max-x min-x)
                           :height (- max-y min-y)))))
 
+(defmethod destroy-mirror ((port clx-port) mirrored-sheet)
+  (let ((mirror (sheet-direct-mirror mirrored-sheet)))
+    (xlib:destroy-window mirror)))
+
 ;;; EOF
