@@ -85,12 +85,12 @@
     (setf (xlib:window-event-mask *window*)
           (xlib:make-event-mask :exposure))
 
-    (setf (xlib:wm-name window)
+    (setf (xlib:wm-name *window*)
 	  (or window-title *default-window-title*))
 
     (when space-requirement
-      (set-window-space-requirement window space-requirement))
-    (xlib:map-window window)))
+      (set-window-space-requirement *window* space-requirement))
+    (xlib:map-window *window*)))
 
 (defun close-display ()
   ;; It is sufficient to drop the reference to *window*, as closing
