@@ -155,6 +155,15 @@
                         :line-width 1 :cap-style :projecting
                         :drawable (xlib:screen-root screen)))
 
+(defun handle-key-press (key-code)
+  (let ((keysym (xlib:keycode->keysym *display* key-code 0)))
+    (declare (integer keysym))
+    (cond
+      ;; For some reason, the keysyms I need aren't defined in CLX.
+      ((= keysym +xk-left+)  (turn-left)    (force-redraw))
+      ((= keysym +xk-right+) (turn-right)   (force-redraw))
+      ((= keysym +xk-up+)    (move-forward) (force-redraw)))))
+
 (defun run-event-loop ()
   (xlib:event-case
    (*display*)
@@ -167,13 +176,7 @@
     t)
    (:key-press
     (code)
-    (let ((keysym (xlib:keycode->keysym *display* code 0)))
-      (declare (integer keysym))
-      (cond
-	;; For some reason, the keysyms I need aren't defined in CLX.
-	((= keysym +xk-left+)  (turn-left)    (force-redraw))
-	((= keysym +xk-right+) (turn-right)   (force-redraw))
-	((= keysym +xk-up+)    (move-forward) (force-redraw))))
+    (handle-key-press code)
     nil)))
 
 (defun start-example ()
