@@ -165,20 +165,15 @@
       ((= keysym +xk-up+)    (move-forward) (force-redraw)))))
 
 (defun handle-one-event ()
-  (xlib:event-case
-      (*display*)
-    (:exposure
-     ()
-     (draw-maze)
-     t)
-    (:button-release
-     ()
-     (throw '%exit-event-loop nil)
-     t)
-    (:key-press
-     (code)
-     (handle-key-press code)
-     t)))
+  (let ((event (xlib:process-event *display* :handler #'list)))
+    (case (getf event :event-key)
+      (:exposure
+       (draw-maze))
+      (:button-release
+       (throw '%exit-event-loop nil))
+      (:key-press
+       (let ((code (getf event :code)))
+         (handle-key-press code))))))
 
 (defun run-event-loop ()
   (catch '%exit-event-loop
