@@ -164,23 +164,26 @@
       ((= keysym +xk-right+) (turn-right)   (force-redraw))
       ((= keysym +xk-up+)    (move-forward) (force-redraw)))))
 
+(defun handle-one-event ()
+  (xlib:event-case
+      (*display*)
+    (:exposure
+     ()
+     (draw-maze)
+     t)
+    (:button-release
+     ()
+     (throw '%exit-event-loop nil)
+     t)
+    (:key-press
+     (code)
+     (handle-key-press code)
+     t)))
+
 (defun run-event-loop ()
   (catch '%exit-event-loop
     (loop
-       (xlib:event-case
-           (*display*)
-         (:exposure
-          ()
-          (draw-maze)
-          t)
-         (:button-release
-          ()
-          (throw '%exit-event-loop nil)
-          t)
-         (:key-press
-          (code)
-          (handle-key-press code)
-          t)))))
+       (handle-one-event))))
 
 (defun start-example ()
   "run the example renderer, connecting to an X display on HOST."
