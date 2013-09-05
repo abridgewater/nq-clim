@@ -166,20 +166,21 @@
 
 (defun run-event-loop ()
   (catch '%exit-event-loop
-    (xlib:event-case
-        (*display*)
-      (:exposure
-       ()
-       (draw-maze)
-       nil)
-      (:button-release
-       ()
-       (throw '%exit-event-loop nil)
-       nil)
-      (:key-press
-       (code)
-       (handle-key-press code)
-       nil))))
+    (loop
+       (xlib:event-case
+           (*display*)
+         (:exposure
+          ()
+          (draw-maze)
+          t)
+         (:button-release
+          ()
+          (throw '%exit-event-loop nil)
+          t)
+         (:key-press
+          (code)
+          (handle-key-press code)
+          t)))))
 
 (defun start-example ()
   "run the example renderer, connecting to an X display on HOST."
