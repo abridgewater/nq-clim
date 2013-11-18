@@ -164,9 +164,15 @@
       ((= keysym +xk-right+) (turn-right)   (force-redraw))
       ((= keysym +xk-up+)    (move-forward) (force-redraw)))))
 
+(defgeneric event-type (event))
+
+(defmethod event-type ((event cons))
+  "Compatibility shim for CLX event plists"
+  (getf event :event-key))
+
 (defun handle-one-event ()
   (let ((event (xlib:process-event *display* :handler #'list)))
-    (case (getf event :event-key)
+    (case (event-type event)
       (:exposure
        (draw-maze))
       (:button-release
