@@ -170,8 +170,11 @@
   "Compatibility shim for CLX event plists"
   (getf event :event-key))
 
+(defun convert-clx-event (&rest event-plist)
+  (apply #'list event-plist))
+
 (defun handle-one-event ()
-  (let ((event (xlib:process-event *display* :handler #'list)))
+  (let ((event (xlib:process-event *display* :handler #'convert-clx-event)))
     (case (event-type event)
       (:exposure
        (draw-maze))
