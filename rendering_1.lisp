@@ -173,8 +173,11 @@
 (defun convert-clx-event (&rest event-plist)
   (apply #'list event-plist))
 
+(defun read-event ()
+  (xlib:process-event *display* :handler #'convert-clx-event))
+
 (defun handle-one-event ()
-  (let ((event (xlib:process-event *display* :handler #'convert-clx-event)))
+  (let ((event (read-event)))
     (case (event-type event)
       (:exposure
        (draw-maze))
