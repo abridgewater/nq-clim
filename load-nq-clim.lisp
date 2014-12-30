@@ -41,6 +41,7 @@
                 "port/port"
                 "sheet/mirror-functions"
                 "sheet/mirrored-sheet-mixin"
+                "frame/application-frame"
                 "port/port-protocol"
                 "port/basic-port"
                 "port/port-discovery"
