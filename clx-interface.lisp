@@ -6,6 +6,7 @@
 
 (cl:defpackage :game-stuff/clx-interface
   (:use :cl
+        :nq-clim/frame/application-frame-functions
         :nq-clim/layout/space-requirement
         :nq-clim/sheet/mirror-functions
         :nq-clim/sheet/sheet-geometry-protocol
@@ -126,20 +127,20 @@
   (setf *port* nil))
 
 (defun call-with-x11-display (fun &key display-name space-requirement
-			      window-title)
+			      frame)
   (unwind-protect
        (progn
 	 (init-display :display-name display-name
 		       :space-requirement space-requirement
-		       :window-title window-title)
+		       :window-title (and frame (frame-pretty-name frame)))
 	 (funcall fun))
     (close-display)))
 
-(defmacro with-x11-display ((&key display-name space-requirement window-title)
+(defmacro with-x11-display ((&key display-name space-requirement frame)
 			    &body body)
   `(call-with-x11-display (lambda () ,@body)
 			  :display-name ,display-name
 			  :space-requirement ,space-requirement
-			  :window-title ,window-title))
+			  :frame ,frame))
 
 ;;; EOF

@@ -16,6 +16,7 @@
         :nq-clim/medium/drawing
         :nq-clim/backend/clx/medium
         :nq-clim/layout/space-requirement
+        :nq-clim/frame/standard-application-frame
         :game-stuff/clx-interface)
   (:export "START-EXAMPLE"))
 (in-package :rendering-1)
@@ -202,7 +203,8 @@
                       :width 256 :height 256
                       :min-width 256 :min-height 256
                       :max-width 256 :max-height 256)
-                     :window-title "Dungeon Crawl -- Rendering 1")
+                     :frame (make-instance 'standard-application-frame
+                                           :pretty-name "Dungeon Crawl -- Rendering 1"))
     (setf *medium*
           (make-clx-medium *window*
                            (create-gc (xlib:display-default-screen *display*))))
