@@ -148,7 +148,8 @@
 
 
 (defun force-redraw ()
-  (xlib:clear-area *window* :x 0 :y 0 :width 256 :height 256 :exposures-p t))
+  (xlib:clear-area *window* :x 0 :y 0 :width 256 :height 256 :exposures-p nil)
+  (draw-maze))
 
 (defun create-gc (screen)
   (xlib:create-gcontext :foreground (xlib:screen-black-pixel screen)
