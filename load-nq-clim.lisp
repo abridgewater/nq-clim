@@ -44,6 +44,7 @@
                 "frame/application-frame"
                 "frame/application-frame-functions"
                 "frame/manageable-frame-functions"
+                "frame/manageable-frame-mixin"
                 "frame/standard-application-frame"
                 "port/port-protocol"
                 "port/basic-port"
