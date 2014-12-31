@@ -66,7 +66,7 @@
                                sheet-parent-mixin
                                sheet-geometry-mixin
                                sheet)
-  ())
+  ((frame :initarg :frame :accessor clx-interface-sheet-frame)))
 
 
 (defun set-window-space-requirement (window space-requirement)
@@ -87,7 +87,8 @@
   ;; what we have available at the moment.
   (setf *graft* (make-clx-graft *port*))
 
-  (setf *sheet* (make-instance 'clx-interface-sheet))
+  (setf *sheet* (make-instance 'clx-interface-sheet
+                               :frame frame))
   (setf (sheet-transformation *sheet*) +identity-transformation+)
   (let ((width (or (and space-requirement
                         (space-requirement-width space-requirement))
