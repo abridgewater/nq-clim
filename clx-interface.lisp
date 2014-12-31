@@ -78,7 +78,7 @@
            :width  width  :min-width  min-width  :max-width  max-width
            :height height :min-height min-height :max-height max-height))))
 
-(defun init-display (&key display-name space-requirement window-title)
+(defun init-display (&key display-name space-requirement frame)
   (setf *port*
         (find-port :server-path `(:clx ,@(when display-name
                                                `(:display ,display-name)))))
@@ -109,7 +109,7 @@
         (xlib:make-event-mask :exposure))
 
   (setf (xlib:wm-name *window*)
-        (or window-title *default-window-title*))
+        (or (and frame (frame-pretty-name frame)) *default-window-title*))
 
   (when space-requirement
     (set-window-space-requirement *window* space-requirement))
@@ -132,7 +132,7 @@
        (progn
 	 (init-display :display-name display-name
 		       :space-requirement space-requirement
-		       :window-title (and frame (frame-pretty-name frame)))
+		       :frame frame)
 	 (funcall fun))
     (close-display)))
 
