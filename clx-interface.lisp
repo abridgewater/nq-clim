@@ -7,6 +7,7 @@
 (cl:defpackage :game-stuff/clx-interface
   (:use :cl
         :nq-clim/frame/application-frame-functions
+        :nq-clim/frame/manageable-frame-functions
         :nq-clim/layout/space-requirement
         :nq-clim/sheet/mirror-functions
         :nq-clim/sheet/sheet-geometry-protocol
@@ -98,6 +99,8 @@
                     *default-window-height*)))
     (resize-sheet *sheet* width height))
   (sheet-adopt-child *graft* *sheet*)
+
+  (setf (frame-top-level-sheet frame) *sheet*)
 
   (setf *window* (realize-mirror *port* *sheet*))
 
