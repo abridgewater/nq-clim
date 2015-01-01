@@ -55,6 +55,7 @@
                 "backend/clx/mirror"
                 "backend/clx/frame-sheet"
                 "pane/pane"
+                "pane/basic-pane"
                 "clx-interface"))
   (load (compile-file file)))
 
