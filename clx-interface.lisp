@@ -11,16 +11,13 @@
         :nq-clim/layout/space-requirement
         :nq-clim/sheet/mirror-functions
         :nq-clim/sheet/sheet-geometry-protocol
-        :nq-clim/sheet/sheet-geometry-mixin
-        :nq-clim/sheet/sheet-parent-mixin
         :nq-clim/sheet/sheet-hierarchy-protocol
-        :nq-clim/sheet/sheet
-        :nq-clim/sheet/mirrored-sheet-mixin
         :nq-clim/geometry/identity-transformation
         :nq-clim/port/port-discovery
         :nq-clim/port/port-protocol
         :nq-clim/backend/clx/port
-        :nq-clim/backend/clx/graft)
+        :nq-clim/backend/clx/graft
+        :nq-clim/backend/clx/frame-sheet)
   (:export
    "*PORT*"
    "*GRAFT*"
@@ -59,15 +56,6 @@
 (defparameter *default-window-height* 240)
 (defparameter *default-window-width* 256)
 (defparameter *default-window-title* "CLX Interface Window")
-
-
-;; A placeholder SHEET class.
-
-(defclass clx-frame-sheet (mirrored-sheet-mixin
-                               sheet-parent-mixin
-                               sheet-geometry-mixin
-                               sheet)
-  ((frame :initarg :frame :accessor clx-frame-sheet-frame)))
 
 
 (defun set-window-space-requirement (window space-requirement)

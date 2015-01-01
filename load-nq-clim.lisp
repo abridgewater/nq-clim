@@ -53,6 +53,7 @@
                 "backend/clx/graft"
                 "backend/clx/medium"
                 "backend/clx/mirror"
+                "backend/clx/frame-sheet"
                 "clx-interface"))
   (load (compile-file file)))
 
