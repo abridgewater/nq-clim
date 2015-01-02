@@ -6,7 +6,8 @@
 
 (cl:defpackage :nq-clim/sheet/sheet-multiple-child-mixin
   (:use :cl
-        :nq-clim/sheet/sheet-hierarchy-protocol)
+        :nq-clim/sheet/sheet-hierarchy-protocol
+        :nq-clim/sheet/sheet-notification-protocol)
   (:export
    "SHEET-MULTIPLE-CHILD-MIXIN"))
 (cl:in-package :nq-clim/sheet/sheet-multiple-child-mixin)
@@ -31,5 +32,11 @@
   ;; And allow the child to raise an error if it isn't actually a
   ;; child and to take care of its own bookkeeping.
   (call-next-method))
+
+(defmethod note-sheet-grafted :after ((sheet sheet-multiple-child-mixin))
+  (map nil #'note-sheet-grafted (sheet-children sheet)))
+
+(defmethod note-sheet-degrafted :before ((sheet sheet-multiple-child-mixin))
+  (map nil #'note-sheet-degrafted (sheet-children sheet)))
 
 ;;; EOF
