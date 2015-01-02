@@ -23,6 +23,7 @@
    ;; "RAISE-SHEET"
    ;; "BURY-SHEET"
    ;; "REORDER-SHEETS"
+   "SHEET-GRAFTED-P"
    "SHEET-ENABLED-P"
    "SHEET-VIEWABLE-P"
    ;; "SHEET-OCCLUDING-SHEETS"
@@ -103,6 +104,15 @@ that this list must be in order from topmost to bottommost.")
             (sheet-ancestor-p parent putative-ancestor))))))
 
 ;; Skipping the sheet ordering stuff for now.
+
+(defgeneric sheet-grafted-p (sheet)
+  (:documentation
+   "Return true iif the sheet SHEET is a graft or one of its ancestors
+   is a graft.")
+  (:method ((sheet sheet))
+    (let ((parent (sheet-parent sheet)))
+      (when parent
+        (sheet-grafted-p parent)))))
 
 (defgeneric sheet-enabled-p (sheet)
   ;; NOTE: We cannot provide a generic implementation, as this
