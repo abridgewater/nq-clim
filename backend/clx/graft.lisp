@@ -8,6 +8,7 @@
   (:use :cl
         :nq-clim/geometry/identity-transformation
         :nq-clim/sheet/sheet
+        :nq-clim/sheet/sheet-hierarchy-protocol
         :nq-clim/sheet/sheet-multiple-child-mixin
         :nq-clim/sheet/mirrored-sheet-mixin
         :nq-clim/sheet/sheet-geometry-mixin
@@ -26,6 +27,16 @@
                      sheet-geometry-mixin
                      sheet)
   ())
+
+(defmethod sheet-grafted-p ((sheet clx-graft))
+  ;; Grafts are, by definition, grafted.
+  t)
+
+(defmethod sheet-viewable-p ((sheet clx-graft))
+  ;; Grafts are viewable if they are enabled.  We'll presume that they
+  ;; are also always enabled.  If they can be disabled, then we'll
+  ;; need to fix this.
+  t)
 
 (defmethod realize-mirror ((port clx-port) (mirrored-sheet clx-graft))
   ;; This is a bit of a KLUDGE: We presume that there is only one
