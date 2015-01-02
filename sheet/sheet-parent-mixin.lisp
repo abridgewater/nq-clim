@@ -7,7 +7,8 @@
 (cl:defpackage :nq-clim/sheet/sheet-parent-mixin
   (:use :cl
         :nq-clim/sheet/sheet
-        :nq-clim/sheet/sheet-hierarchy-protocol)
+        :nq-clim/sheet/sheet-hierarchy-protocol
+        :nq-clim/sheet/sheet-notification-protocol)
   (:export
    "SHEET-PARENT-MIXIN"))
 (cl:in-package :nq-clim/sheet/sheet-parent-mixin)
@@ -20,10 +21,17 @@
     (error 'sheet-already-has-parent :sheet child))
   (setf (slot-value child 'parent) sheet))
 
+(defmethod sheet-adopt-child :after ((sheet sheet) (child sheet-parent-mixin))
+  (note-sheet-adopted child))
+
 (defmethod sheet-disown-child ((sheet sheet) (child sheet-parent-mixin) &key (errorp t))
   (if (eq (sheet-parent child) sheet)
       (setf (slot-value child 'parent) nil)
       (when errorp
         (error 'sheet-is-not-child :parent sheet :sheet child))))
+
+(defmethod sheet-disown-child :after ((sheet sheet) (child sheet-parent-mixin) &key errorp)
+  (declare (ignore errorp))
+  (note-sheet-disowned child))
 
 ;;; EOF
