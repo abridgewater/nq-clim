@@ -22,7 +22,9 @@
   (setf (slot-value child 'parent) sheet))
 
 (defmethod sheet-adopt-child :after ((sheet sheet) (child sheet-parent-mixin))
-  (note-sheet-adopted child))
+  (note-sheet-adopted child)
+  (when (sheet-grafted-p sheet)
+    (note-sheet-grafted child)))
 
 (defmethod sheet-disown-child ((sheet sheet) (child sheet-parent-mixin) &key (errorp t))
   (if (eq (sheet-parent child) sheet)
@@ -32,6 +34,8 @@
 
 (defmethod sheet-disown-child :after ((sheet sheet) (child sheet-parent-mixin) &key errorp)
   (declare (ignore errorp))
+  (when (sheet-grafted-p sheet)
+    (note-sheet-degrafted child))
   (note-sheet-disowned child))
 
 ;;; EOF
