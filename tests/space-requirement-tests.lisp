@@ -4,9 +4,10 @@
 ;;; Tests for space-requirement behavior.
 ;;;
 
-(cl:defpackage :game-stuff/space-requirement$tests
-  (:use :cl :sb-rt :game-stuff/space-requirement))
-(cl:in-package :game-stuff/space-requirement$tests)
+(cl:defpackage :nq-clim/tests/space-requirement-tests
+  (:use :cl :sb-rt
+        :nq-clim/layout/space-requirement))
+(cl:in-package :nq-clim/tests/space-requirement-tests)
 
 ;; Make sure that we can create a space-requirement and get values
 ;; from it.
