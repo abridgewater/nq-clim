@@ -12,15 +12,16 @@
 
 ;; We represent a rectangle-set as a "shape" (Foley, van Dam, Feiner,
 ;; Hughes, 1990, section 19.7, and certainly other sources) comprised
-;; of a set of Y-spans each with an associated set of X-spans.
+;; of a set of vertical Y-spans each with an associated set of
+;; horizontal X-spans.
 
 ;; A "span" is represented as a CONS with the (inclusive) start
 ;; position and (exclusive) end position as the CAR and CDR.
 ;(deftype span (cons real real))
 
 ;; We represent a Y-span with its set of X-spans as a list, with the
-;; first element being the Y-span and the remaining elements being the
-;; X-spans in order.
+;; first element being the actual span and the remaining elements
+;; being the X-spans in order.
 
 ;; We represent a shape as a list of its Y-spans in order.
 
