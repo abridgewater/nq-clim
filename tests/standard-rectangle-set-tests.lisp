@@ -52,6 +52,16 @@
                      '((20 . 40)))
   ((14 . 61)))
 
+(deftest (unite-x-span-sets set-1-empty)
+    (unite-x-span-sets nil
+                       '((20 . 40)))
+  ((20 . 40)))
+
+(deftest (unite-x-span-sets set-2-empty)
+    (unite-x-span-sets '((20 . 40))
+                       nil)
+  ((20 . 40)))
+
 
 (deftest (unite-y-span-sets same-regions)
     (unite-y-span-sets '(((25 . 50) (20 . 30)))
