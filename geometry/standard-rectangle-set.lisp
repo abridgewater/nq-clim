@@ -25,6 +25,34 @@
 
 ;; We represent a shape as a list of its Y-spans in order.
 
+(defmacro collecting-x-spans (nil &body body)
+  "Return the set of X-spans accumulated by calling (COLLECT-X-SPAN
+START END) within BODY, coalescing adjacent X-spans."
+  (let ((collected-spans-var (gensym))
+        (start-var (gensym))
+        (end-var (gensym))
+        (finish-x-span-fun (gensym)))
+    `(let (,collected-spans-var
+           ,start-var
+           ,end-var)
+       (labels ((,finish-x-span-fun ()
+                  (when ,start-var
+                    (push (cons ,start-var ,end-var)
+                          ,collected-spans-var)))
+                (collect-x-span (start end)
+                  (cond
+                    ((and ,end-var
+                          (= start ,end-var))
+                     (setf ,end-var end))
+                    (t
+                     (,finish-x-span-fun)
+                     (setf ,start-var start
+                           ,end-var end)))))
+         (progn
+           ,@body)
+         (,finish-x-span-fun)
+         (nreverse ,collected-spans-var)))))
+
 (defun unite-x-span-sets (set-1 set-2)
   "Given two sets of X-spans, each in order, produce a minimal set of
 X-spans representing the union of both sets."
@@ -54,6 +82,60 @@ X-spans representing the union of both sets."
          collect (cons start-1 end-1)
          and do (setf start-1 start-2
                       end-1 end-2))))
+
+(defun intersect-x-span-sets (set-1 set-2)
+  "Given two sets of X-spans, each in order, produce a minimal set of
+X-spans representing the intersection of both sets."
+  (collecting-x-spans ()
+    (macrolet ((span-start (span)
+                 (ecase span (span-1 'start-1) (span-2 'start-2)))
+               (span-end (span)
+                 (ecase span (span-1 'end-1) (span-2 'end-2)))
+               (span-set (span)
+                 (ecase span (span-1 'set-1) (span-2 'set-2)))
+               (next-span (set)
+                 `(let ((span (pop ,set)))
+                    (values (car span) (cdr span)))))
+      (symbol-macrolet ((span-1 (values start-1 end-1))
+                        (span-2 (values start-2 end-2)))
+        (let (start-1 end-1 start-2 end-2)
+          (macrolet ((discard-span-before (span boundary)
+                       ;; If SPAN extends beyond BOUNDARY, discard the
+                       ;; portion of SPAN prior to BOUNDARY.
+                       ;; Otherwise, pull the next span from the
+                       ;; corresponding list.
+                       `(if (<= (span-end ,span) ,boundary)
+                            (setf ,span (next-span (span-set ,span)))
+                            (setf (span-start ,span) ,boundary))))
+
+            (setf span-1 (next-span set-1))
+            (setf span-2 (next-span set-2))
+            (loop
+               while (and span-1 span-2)
+               do (cond
+                    ((< start-1 start-2)
+                     ;(collect-x-span start-1 (min end-1 start-2))
+                     (discard-span-before span-1 start-2))
+
+                    ((> start-1 start-2)
+                     ;(collect-x-span start-2 (min end-2 start-1))
+                     (discard-span-before span-2 start-1))
+
+                    (t
+                     (let ((boundary (min end-1 end-2)))
+                       (collect-x-span start-1 boundary)
+                       (discard-span-before span-1 boundary)
+                       (discard-span-before span-2 boundary)))))
+            #+(or)
+            (loop
+               while span-1
+               do (collect-x-span start-1 end-1)
+                 (setf span-1 (next-span set-1)))
+            #+(or)
+            (loop
+               while span-2
+               do (collect-x-span start-2 end-2)
+                 (setf span-2 (next-span set-2)))))))))
 
 (defmacro collecting-y-spans (nil &body body)
   "Return the set of Y-spans accumulated by calling (COLLECT-Y-SPAN

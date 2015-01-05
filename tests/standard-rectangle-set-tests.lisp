@@ -7,6 +7,7 @@
 (cl:defpackage :nq-clim/tests/standard-rectangle-set-tests
   (:use :cl :sb-rt)
   (:import-from :nq-clim/geometry/standard-rectangle-set
+                "INTERSECT-X-SPAN-SETS"
                 "UNITE-X-SPAN-SETS"
                 "UNITE-Y-SPAN-SETS"))
 (cl:in-package :nq-clim/tests/standard-rectangle-set-tests)
@@ -193,5 +194,56 @@
   (((25 . 50) (50 . 75))
    ((50 . 75) (25 . 100))
    ((75 . 100) (50 . 75))))
+
+
+(deftest (intersect-x-span-sets same-regions)
+    (intersect-x-span-sets '((14 . 27))
+                     '((14 . 27)))
+  ((14 . 27)))
+
+(deftest (intersect-x-span-sets overlapping-regions set-1-first)
+    (intersect-x-span-sets '((14 . 27))
+                     '((20 . 42)))
+  ((20 . 27)))
+
+(deftest (intersect-x-span-sets overlapping-regions set-2-first)
+    (intersect-x-span-sets '((20 . 42))
+                     '((14 . 27)))
+  ((20 . 27)))
+
+(deftest (intersect-x-span-sets abutting-regions set-1-first)
+    (intersect-x-span-sets '((14 . 20))
+                     '((20 . 42)))
+  nil)
+
+(deftest (intersect-x-span-sets abutting-regions set-2-first)
+    (intersect-x-span-sets '((20 . 42))
+                     '((14 . 20)))
+  nil)
+
+(deftest (intersect-x-span-sets disjoint-regions set-1-first)
+    (intersect-x-span-sets '((14 . 27))
+                     '((28 . 42)))
+  nil)
+
+(deftest (intersect-x-span-sets disjoint-regions set-2-first)
+    (intersect-x-span-sets '((28 . 42))
+                     '((14 . 27)))
+  nil)
+
+(deftest (intersect-x-span-sets set-1-empty)
+    (intersect-x-span-sets nil
+                       '((20 . 40)))
+  nil)
+
+(deftest (intersect-x-span-sets set-2-empty)
+    (intersect-x-span-sets '((20 . 40))
+                       nil)
+  nil)
+
+(deftest (intersect-x-span-sets three-become-two)
+    (intersect-x-span-sets '((14 . 27) (40 . 61))
+                     '((20 . 45)))
+  ((20 . 27) (40 . 45)))
 
 ;;; EOF
