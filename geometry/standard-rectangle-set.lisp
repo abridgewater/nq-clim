@@ -83,9 +83,7 @@ X-spans representing the union of both sets."
          and do (setf start-1 start-2
                       end-1 end-2))))
 
-(defun intersect-x-span-sets (set-1 set-2)
-  "Given two sets of X-spans, each in order, produce a minimal set of
-X-spans representing the intersection of both sets."
+(defun operate-on-x-span-sets (set-1 set-2 operation)
   (collecting-x-spans ()
     (macrolet ((span-start (span)
                  (ecase span (span-1 'start-1) (span-2 'start-2)))
@@ -114,28 +112,38 @@ X-spans representing the intersection of both sets."
                while (and span-1 span-2)
                do (cond
                     ((< start-1 start-2)
-                     ;(collect-x-span start-1 (min end-1 start-2))
+                     (when (funcall operation t nil)
+                       (collect-x-span start-1 (min end-1 start-2)))
                      (discard-span-before span-1 start-2))
 
                     ((> start-1 start-2)
-                     ;(collect-x-span start-2 (min end-2 start-1))
+                     (when (funcall operation nil t)
+                       (collect-x-span start-2 (min end-2 start-1)))
                      (discard-span-before span-2 start-1))
 
                     (t
                      (let ((boundary (min end-1 end-2)))
-                       (collect-x-span start-1 boundary)
+                       (when (funcall operation t t)
+                         (collect-x-span start-1 boundary))
                        (discard-span-before span-1 boundary)
                        (discard-span-before span-2 boundary)))))
-            #+(or)
-            (loop
-               while span-1
-               do (collect-x-span start-1 end-1)
-                 (setf span-1 (next-span set-1)))
-            #+(or)
-            (loop
-               while span-2
-               do (collect-x-span start-2 end-2)
-                 (setf span-2 (next-span set-2)))))))))
+            (when (funcall operation t nil)
+              (loop
+                 while span-1
+                 do (collect-x-span start-1 end-1)
+                   (setf span-1 (next-span set-1))))
+            (when (funcall operation nil t)
+              (loop
+                 while span-2
+                 do (collect-x-span start-2 end-2)
+                   (setf span-2 (next-span set-2))))))))))
+
+(defun intersection-operation (x y) (and x y))
+
+(defun intersect-x-span-sets (set-1 set-2)
+  "Given two sets of X-spans, each in order, produce a minimal set of
+X-spans representing the intersection of both sets."
+  (operate-on-x-span-sets set-1 set-2 #'intersection-operation))
 
 (defmacro collecting-y-spans (nil &body body)
   "Return the set of Y-spans accumulated by calling (COLLECT-Y-SPAN
