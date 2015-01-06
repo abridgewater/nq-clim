@@ -161,9 +161,7 @@ Y-spans."
          (,finish-y-span-fun)
          (nreverse ,collected-spans-var)))))
 
-(defun unite-y-span-sets (set-1 set-2)
-  "Given two sets of Y-spans, each in order, produce a minimal set of
-Y-spans representing the union of both sets."
+(defun operate-on-y-span-sets (set-1 set-2 operation)
   (collecting-y-spans ()
     ;; This mess, from the first MACROLET through the LET, allows us
     ;; to work with two Y-spans, each drawn from their specific list,
@@ -211,7 +209,7 @@ Y-spans representing the union of both sets."
                     (t
                      (let ((boundary (min end-1 end-2)))
                        (collect-y-span start-1 boundary
-                                       (unite-x-span-sets x-spans-1 x-spans-2))
+                                       (operate-on-x-span-sets x-spans-1 x-spans-2 operation))
                        (discard-span-before span-1 boundary)
                        (discard-span-before span-2 boundary)))))
             (loop
@@ -222,5 +220,10 @@ Y-spans representing the union of both sets."
                while span-2
                do (collect-y-span start-2 end-2 x-spans-2)
                  (setf span-2 (next-span set-2)))))))))
+
+(defun unite-y-span-sets (set-1 set-2)
+  "Given two sets of Y-spans, each in order, produce a minimal set of
+Y-spans representing the union of both sets."
+  (operate-on-y-span-sets set-1 set-2 #'union-operation))
 
 ;;; EOF
