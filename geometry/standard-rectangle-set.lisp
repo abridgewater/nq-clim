@@ -118,11 +118,6 @@ START END) within BODY, coalescing adjacent X-spans."
 (defun union-operation (x y) (or x y))
 (defun intersection-operation (x y) (and x y))
 
-(defun unite-x-span-sets (set-1 set-2)
-  "Given two sets of X-spans, each in order, produce a minimal set of
-X-spans representing the union of both sets."
-  (operate-on-x-span-sets set-1 set-2 #'union-operation))
-
 (defun intersect-x-span-sets (set-1 set-2)
   "Given two sets of X-spans, each in order, produce a minimal set of
 X-spans representing the intersection of both sets."

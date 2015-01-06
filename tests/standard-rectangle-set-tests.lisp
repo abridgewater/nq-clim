@@ -8,59 +8,70 @@
   (:use :cl :sb-rt)
   (:import-from :nq-clim/geometry/standard-rectangle-set
                 "INTERSECT-X-SPAN-SETS"
-                "UNITE-X-SPAN-SETS"
+                "OPERATE-ON-X-SPAN-SETS"
+                "UNION-OPERATION"
                 "UNITE-Y-SPAN-SETS"))
 (cl:in-package :nq-clim/tests/standard-rectangle-set-tests)
 
 
 (deftest (unite-x-span-sets same-regions)
-    (unite-x-span-sets '((14 . 27))
-                     '((14 . 27)))
+    (operate-on-x-span-sets '((14 . 27))
+                            '((14 . 27))
+                            #'union-operation)
   ((14 . 27)))
 
 (deftest (unite-x-span-sets overlapping-regions set-1-first)
-    (unite-x-span-sets '((14 . 27))
-                     '((20 . 42)))
+    (operate-on-x-span-sets '((14 . 27))
+                            '((20 . 42))
+                            #'union-operation)
   ((14 . 42)))
 
 (deftest (unite-x-span-sets overlapping-regions set-2-first)
-    (unite-x-span-sets '((20 . 42))
-                     '((14 . 27)))
+    (operate-on-x-span-sets '((20 . 42))
+                            '((14 . 27))
+                            #'union-operation)
   ((14 . 42)))
 
 (deftest (unite-x-span-sets abutting-regions set-1-first)
-    (unite-x-span-sets '((14 . 20))
-                     '((20 . 42)))
+    (operate-on-x-span-sets '((14 . 20))
+                            '((20 . 42))
+                            #'union-operation)
   ((14 . 42)))
 
 (deftest (unite-x-span-sets abutting-regions set-2-first)
-    (unite-x-span-sets '((20 . 42))
-                     '((14 . 20)))
+    (operate-on-x-span-sets '((20 . 42))
+                            '((14 . 20))
+                            #'union-operation)
   ((14 . 42)))
 
 (deftest (unite-x-span-sets disjoint-regions set-1-first)
-    (unite-x-span-sets '((14 . 27))
-                     '((28 . 42)))
+    (operate-on-x-span-sets '((14 . 27))
+                            '((28 . 42))
+                            #'union-operation)
   ((14 . 27) (28 . 42)))
 
 (deftest (unite-x-span-sets disjoint-regions set-2-first)
-    (unite-x-span-sets '((28 . 42))
-                     '((14 . 27)))
+    (operate-on-x-span-sets '((28 . 42))
+                            '((14 . 27))
+                            #'union-operation)
   ((14 . 27) (28 . 42)))
 
 (deftest (unite-x-span-sets three-become-one)
-    (unite-x-span-sets '((14 . 27) (40 . 61))
-                     '((20 . 40)))
+    (operate-on-x-span-sets '((14 . 27) (40 . 61))
+                            '((20 . 40))
+                            #'union-operation)
   ((14 . 61)))
 
 (deftest (unite-x-span-sets set-1-empty)
-    (unite-x-span-sets nil
-                       '((20 . 40)))
+    (operate-on-x-span-sets nil
+                            '((20 . 40))
+                            #'union-operation)
   ((20 . 40)))
 
 (deftest (unite-x-span-sets set-2-empty)
-    (unite-x-span-sets '((20 . 40))
-                       nil)
+    (operate-on-x-span-sets '((20 . 40))
+                            nil
+                            #'union-operation)
   ((20 . 40)))
 
 
