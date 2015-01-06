@@ -15,15 +15,22 @@
 ;; of a set of vertical Y-spans each with an associated set of
 ;; horizontal X-spans.
 
-;; A "span" is represented as a CONS with the (inclusive) start
-;; position and (exclusive) end position as the CAR and CDR.
+;; A "shape" is a collection of non-overlapping rectangular spaces
+;; arranged in horizontal strips of varying height and position.
+;; Within each horizontal strip are vertical sections of varying width
+;; and position that all have the same height and vertical position.
+
+;; We track position and width or height as the (inclusive) start
+;; position and (exclusive) end position, stored as the CAR and CDR of
+;; a CONS respectively, and we call the combination a "span".
 ;(deftype span (cons real real))
 
-;; We represent a Y-span with its set of X-spans as a list, with the
-;; first element being the actual span and the remaining elements
-;; being the X-spans in order.
-
-;; We represent a shape as a list of its Y-spans in order.
+;; Within each horizontal strip all of the spaces have the same
+;; vertical aspect, so we store them as a list of horizontal spans
+;; (X-spans), ordered by their start position.  Within each shape we
+;; store a list of horizontal strips as lists of their vertical spans
+;; (Y-spans) with associated X-spans, also ordered by their start
+;; position.
 
 (defmacro collecting-x-spans (nil &body body)
   "Return the set of X-spans accumulated by calling (COLLECT-X-SPAN
