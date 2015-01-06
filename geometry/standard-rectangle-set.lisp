@@ -53,36 +53,6 @@ START END) within BODY, coalescing adjacent X-spans."
          (,finish-x-span-fun)
          (nreverse ,collected-spans-var)))))
 
-(defun unite-x-span-sets (set-1 set-2)
-  "Given two sets of X-spans, each in order, produce a minimal set of
-X-spans representing the union of both sets."
-  (flet ((next-span ()
-           ;; Remove and return the span with the lowest start
-           ;; coordinate from either set-1 or set-2, or NIL if there
-           ;; are no more spans.
-           (cond
-             ((null set-1) (pop set-2))
-             ((null set-2) (pop set-1))
-             ((< (caar set-1) (caar set-2))
-              (pop set-1))
-             (t (pop set-2)))))
-    (loop
-       with (start-1 . end-1) = (next-span)
-       for (start-2 . end-2) = (next-span)
-
-       ;; We're out of spans, so return what we've collected.
-       unless start-2 collect (cons start-1 end-1)
-       while start-2
-
-       if (<= start-2 end-1)
-         ;; The spans abut or overlap, merge them.
-         do (setf end-1 (max end-1 end-2))
-       else
-         ;; Collect the current span, and select the new one.
-         collect (cons start-1 end-1)
-         and do (setf start-1 start-2
-                      end-1 end-2))))
-
 (defun operate-on-x-span-sets (set-1 set-2 operation)
   (collecting-x-spans ()
     (macrolet ((span-start (span)
@@ -138,7 +108,13 @@ X-spans representing the union of both sets."
                  do (collect-x-span start-2 end-2)
                    (setf span-2 (next-span set-2))))))))))
 
+(defun union-operation (x y) (or x y))
 (defun intersection-operation (x y) (and x y))
+
+(defun unite-x-span-sets (set-1 set-2)
+  "Given two sets of X-spans, each in order, produce a minimal set of
+X-spans representing the union of both sets."
+  (operate-on-x-span-sets set-1 set-2 #'union-operation))
 
 (defun intersect-x-span-sets (set-1 set-2)
   "Given two sets of X-spans, each in order, produce a minimal set of
