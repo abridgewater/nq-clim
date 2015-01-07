@@ -194,27 +194,38 @@ Y-spans."
                      (discard-span-before span-1 start-2))
 
                     ((> start-1 start-2)
-                     (collect-y-span start-2 (min end-2 start-1) x-spans-2)
+                     (when (funcall operation nil t)
+                       (collect-y-span start-2 (min end-2 start-1)
+                                       x-spans-2))
                      (discard-span-before span-2 start-1))
 
                     (t
-                     (let ((boundary (min end-1 end-2)))
-                       (collect-y-span start-1 boundary
-                                       (operate-on-x-span-sets x-spans-1 x-spans-2 operation))
+                     (let* ((boundary (min end-1 end-2))
+                            (result-set
+                             (operate-on-x-span-sets x-spans-1 x-spans-2
+                                                     operation)))
+                       (when result-set
+                         (collect-y-span start-1 boundary result-set))
                        (discard-span-before span-1 boundary)
                        (discard-span-before span-2 boundary)))))
             (loop
                while span-1
                do (collect-y-span start-1 end-1 x-spans-1)
                  (setf span-1 (next-span set-1)))
-            (loop
-               while span-2
-               do (collect-y-span start-2 end-2 x-spans-2)
-                 (setf span-2 (next-span set-2)))))))))
+            (when (funcall operation nil t)
+              (loop
+                 while span-2
+                 do (collect-y-span start-2 end-2 x-spans-2)
+                   (setf span-2 (next-span set-2))))))))))
 
 (defun unite-y-span-sets (set-1 set-2)
   "Given two sets of Y-spans, each in order, produce a minimal set of
 Y-spans representing the union of both sets."
   (operate-on-y-span-sets set-1 set-2 #'union-operation))
+
+(defun differ-y-span-sets (set-1 set-2)
+  "Given two sets of Y-spans, each in order, produce a minimal set of
+Y-spans representing the difference of both sets."
+  (operate-on-y-span-sets set-1 set-2 #'difference-operation))
 
 ;;; EOF

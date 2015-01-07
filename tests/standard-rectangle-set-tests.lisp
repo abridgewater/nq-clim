@@ -8,6 +8,7 @@
   (:use :cl :sb-rt)
   (:import-from :nq-clim/geometry/standard-rectangle-set
                 "DIFFERENCE-OPERATION"
+                "DIFFER-Y-SPAN-SETS"
                 "INTERSECTION-OPERATION"
                 "OPERATE-ON-X-SPAN-SETS"
                 "UNION-OPERATION"
@@ -328,5 +329,133 @@
                             '((20 . 45))
                             #'difference-operation)
   ((14 . 20) (45 . 61)))
+
+
+(deftest (differ-y-span-sets same-regions)
+    (differ-y-span-sets '(((25 . 50) (20 . 30)))
+                        '(((25 . 50) (20 . 30))))
+  nil)
+
+(deftest (differ-y-span-sets disjoint-horizontal-regions set-1-first)
+    (differ-y-span-sets '(((25 . 50) (20 . 30)))
+                        '(((25 . 50) (40 . 50))))
+  (((25 . 50) (20 . 30))))
+
+(deftest (differ-y-span-sets disjoint-horizontal-regions set-2-first)
+    (differ-y-span-sets '(((25 . 50) (40 . 50)))
+                        '(((25 . 50) (20 . 30))))
+  (((25 . 50) (40 . 50))))
+
+(deftest (differ-y-span-sets abutting-horizontal-regions)
+    (differ-y-span-sets '(((25 . 50) (20 . 30)))
+                        '(((25 . 50) (30 . 40))))
+  (((25 . 50) (20 . 30))))
+
+(deftest (differ-y-span-sets overlapping-horizontal-regions)
+    (differ-y-span-sets '(((25 . 50) (20 . 30)))
+                        '(((25 . 50) (25 . 35))))
+  (((25 . 50) (20 . 25))))
+
+(deftest (differ-y-span-sets enclosed-with-overlap set-1-first)
+    (differ-y-span-sets '(((25 . 100) (25 . 100)))
+                        '(((50 . 75) (50 . 75))))
+  (((25 . 50) (25 . 100))
+   ((50 . 75) (25 . 50) (75 . 100))
+   ((75 . 100) (25 . 100))))
+
+(deftest (differ-y-span-sets enclosed-with-overlap set-2-first)
+    (differ-y-span-sets '(((50 . 75) (50 . 75)))
+                        '(((25 . 100) (25 . 100))))
+  nil)
+
+(deftest (differ-y-span-sets overlapping-vertical-regions set-1-first)
+    (differ-y-span-sets '(((25 . 50) (25 . 50)))
+                        '(((45 . 70) (25 . 50))))
+  (((25 . 45) (25 . 50))))
+
+(deftest (differ-y-span-sets overlapping-vertical-regions set-2-first)
+    (differ-y-span-sets '(((45 . 70) (25 . 50)))
+                        '(((25 . 50) (25 . 50))))
+  (((50 . 70) (25 . 50))))
+
+(deftest (differ-y-span-sets abutting-vertical-regions set-1-first)
+    (differ-y-span-sets '(((25 . 50) (25 . 50)))
+                        '(((50 . 75) (25 . 50))))
+  (((25 . 50) (25 . 50))))
+
+(deftest (differ-y-span-sets abutting-vertical-regions set-2-first)
+    (differ-y-span-sets '(((50 . 75) (25 . 50)))
+                        '(((25 . 50) (25 . 50))))
+  (((50 . 75) (25 . 50))))
+
+(deftest (differ-y-span-sets disjoint-vertical-regions set-1-first)
+    (differ-y-span-sets '(((25 . 50) (25 . 50)))
+                        '(((74 . 99) (25 . 50))))
+  (((25 . 50) (25 . 50))))
+
+(deftest (differ-y-span-sets disjoint-vertical-regions set-2-first)
+    (differ-y-span-sets '(((74 . 99) (25 . 50)))
+                        '(((25 . 50) (25 . 50))))
+  (((74 . 99) (25 . 50))))
+
+(deftest (differ-y-span-sets overlapping-squares set-1-northwest)
+    (differ-y-span-sets '(((25 . 75) (25 . 75)))
+                        '(((50 . 100) (50 . 100))))
+  (((25 . 50) (25 . 75))
+   ((50 . 75) (25 . 50))))
+
+(deftest (differ-y-span-sets overlapping-squares set-1-northeast)
+    (differ-y-span-sets '(((25 . 75) (50 . 100)))
+                        '(((50 . 100) (25 . 75))))
+  (((25 . 50) (50 . 100))
+   ((50 . 75) (75 . 100))))
+
+(deftest (differ-y-span-sets overlapping-squares set-1-southeast)
+    (differ-y-span-sets '(((50 . 100) (50 . 100)))
+                        '(((25 . 75) (25 . 75))))
+  (((50 . 75) (75 . 100))
+   ((75 . 100) (50 . 100))))
+
+(deftest (differ-y-span-sets overlapping-squares set-1-southwest)
+    (differ-y-span-sets '(((50 . 100) (25 . 75)))
+                        '(((25 . 75) (50 . 100))))
+  (((50 . 75) (25 . 50))
+   ((75 . 100) (25 . 75))))
+
+(deftest (differ-y-span-sets cross-shape set-1-vertical)
+    (differ-y-span-sets '(((25 . 100) (50 . 75)))
+                        '(((50 . 75) (25 . 100))))
+  (((25 . 50) (50 . 75))
+   ((75 . 100) (50 . 75))))
+
+(deftest (differ-y-span-sets cross-shape set-2-vertical)
+    (differ-y-span-sets '(((50 . 75) (25 . 100)))
+                        '(((25 . 100) (50 . 75))))
+  (((50 . 75) (25 . 50) (75 . 100))))
+
+(deftest (differ-y-span-sets checkerboard set-1-northwest)
+    (differ-y-span-sets '(((25 . 50) (25 . 50))
+                          ((50 . 75) (50 . 75)))
+                        '(((25 . 50) (50 . 75))
+                          ((50 . 75) (25 . 50))))
+  (((25 . 50) (25 . 50))
+   ((50 . 75) (50 . 75))))
+
+(deftest (differ-y-span-sets checkerboard set-2-northwest)
+    (differ-y-span-sets '(((25 . 50) (50 . 75))
+                          ((50 . 75) (25 . 50)))
+                        '(((25 . 50) (25 . 50))
+                          ((50 . 75) (50 . 75))))
+  (((25 . 50) (50 . 75))
+   ((50 . 75) (25 . 50))))
+
+(deftest (differ-y-span-sets cross-shape double-horizontal-with-covered-gaps)
+    (differ-y-span-sets '(((25 . 100) (50 . 75)))
+                        '(((50 . 60) (25 . 50) (60 . 100))
+                          ((60 . 75) (25 . 60) (75 . 100))))
+  (((25 . 50) (50 . 75))
+   ((50 . 60) (50 . 60))
+   ((60 . 75) (60 . 75))
+   ((75 . 100) (50 . 75))))
 
 ;;; EOF
