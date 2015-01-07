@@ -117,6 +117,7 @@ START END) within BODY, coalescing adjacent X-spans."
 
 (defun union-operation (x y) (or x y))
 (defun intersection-operation (x y) (and x y))
+(defun difference-operation (x y) (and x (not y)))
 
 (defmacro collecting-y-spans (nil &body body)
   "Return the set of Y-spans accumulated by calling (COLLECT-Y-SPAN

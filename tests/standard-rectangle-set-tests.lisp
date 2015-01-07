@@ -7,6 +7,7 @@
 (cl:defpackage :nq-clim/tests/standard-rectangle-set-tests
   (:use :cl :sb-rt)
   (:import-from :nq-clim/geometry/standard-rectangle-set
+                "DIFFERENCE-OPERATION"
                 "INTERSECTION-OPERATION"
                 "OPERATE-ON-X-SPAN-SETS"
                 "UNION-OPERATION"
@@ -266,5 +267,66 @@
                             '((20 . 45))
                             #'intersection-operation)
   ((20 . 27) (40 . 45)))
+
+
+(deftest (differ-x-span-sets same-regions)
+    (operate-on-x-span-sets '((14 . 27))
+                            '((14 . 27))
+                            #'difference-operation)
+  nil)
+
+(deftest (differ-x-span-sets overlapping-regions set-1-first)
+    (operate-on-x-span-sets '((14 . 27))
+                            '((20 . 42))
+                            #'difference-operation)
+  ((14 . 20)))
+
+(deftest (differ-x-span-sets overlapping-regions set-2-first)
+    (operate-on-x-span-sets '((20 . 42))
+                            '((14 . 27))
+                            #'difference-operation)
+  ((27 . 42)))
+
+(deftest (differ-x-span-sets abutting-regions set-1-first)
+    (operate-on-x-span-sets '((14 . 20))
+                            '((20 . 42))
+                            #'difference-operation)
+  ((14 . 20)))
+
+(deftest (differ-x-span-sets abutting-regions set-2-first)
+    (operate-on-x-span-sets '((20 . 42))
+                            '((14 . 20))
+                            #'difference-operation)
+  ((20 . 42)))
+
+(deftest (differ-x-span-sets disjoint-regions set-1-first)
+    (operate-on-x-span-sets '((14 . 27))
+                            '((28 . 42))
+                            #'difference-operation)
+  ((14 . 27)))
+
+(deftest (differ-x-span-sets disjoint-regions set-2-first)
+    (operate-on-x-span-sets '((28 . 42))
+                            '((14 . 27))
+                            #'difference-operation)
+  ((28 . 42)))
+
+(deftest (differ-x-span-sets set-1-empty)
+    (operate-on-x-span-sets nil
+                            '((20 . 40))
+                            #'difference-operation)
+  nil)
+
+(deftest (differ-x-span-sets set-2-empty)
+    (operate-on-x-span-sets '((20 . 40))
+                            nil
+                            #'difference-operation)
+  ((20 . 40)))
+
+(deftest (differ-x-span-sets three-become-two)
+    (operate-on-x-span-sets '((14 . 27) (40 . 61))
+                            '((20 . 45))
+                            #'difference-operation)
+  ((14 . 20) (45 . 61)))
 
 ;;; EOF
