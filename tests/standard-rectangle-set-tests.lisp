@@ -7,8 +7,9 @@
 (cl:defpackage :nq-clim/tests/standard-rectangle-set-tests
   (:use :cl :sb-rt)
   (:import-from :nq-clim/geometry/standard-rectangle-set
-                "DIFFERENCE-OPERATION"
                 "DIFFER-Y-SPAN-SETS"
+                "DIFFERENCE-OPERATION"
+                "INTERSECT-Y-SPAN-SETS"
                 "INTERSECTION-OPERATION"
                 "OPERATE-ON-X-SPAN-SETS"
                 "UNION-OPERATION"
@@ -268,6 +269,123 @@
                             '((20 . 45))
                             #'intersection-operation)
   ((20 . 27) (40 . 45)))
+
+
+(deftest (intersect-y-span-sets same-regions)
+    (intersect-y-span-sets '(((25 . 50) (20 . 30)))
+                           '(((25 . 50) (20 . 30))))
+  (((25 . 50) (20 . 30))))
+
+(deftest (intersect-y-span-sets disjoint-horizontal-regions set-1-first)
+    (intersect-y-span-sets '(((25 . 50) (20 . 30)))
+                           '(((25 . 50) (40 . 50))))
+  nil)
+
+(deftest (intersect-y-span-sets disjoint-horizontal-regions set-2-first)
+    (intersect-y-span-sets '(((25 . 50) (40 . 50)))
+                           '(((25 . 50) (20 . 30))))
+  nil)
+
+(deftest (intersect-y-span-sets abutting-horizontal-regions)
+    (intersect-y-span-sets '(((25 . 50) (20 . 30)))
+                           '(((25 . 50) (30 . 40))))
+  nil)
+
+(deftest (intersect-y-span-sets overlapping-horizontal-regions)
+    (intersect-y-span-sets '(((25 . 50) (20 . 30)))
+                           '(((25 . 50) (25 . 35))))
+  (((25 . 50) (25 . 30))))
+
+(deftest (intersect-y-span-sets enclosed-with-overlap set-1-first)
+    (intersect-y-span-sets '(((25 . 100) (25 . 100)))
+                           '(((50 . 75) (50 . 75))))
+  (((50 . 75) (50 . 75))))
+
+(deftest (intersect-y-span-sets enclosed-with-overlap set-2-first)
+    (intersect-y-span-sets '(((50 . 75) (50 . 75)))
+                           '(((25 . 100) (25 . 100))))
+  (((50 . 75) (50 . 75))))
+
+(deftest (intersect-y-span-sets overlapping-vertical-regions set-1-first)
+    (intersect-y-span-sets '(((25 . 50) (25 . 50)))
+                           '(((45 . 70) (25 . 50))))
+  (((45 . 50) (25 . 50))))
+
+(deftest (intersect-y-span-sets overlapping-vertical-regions set-2-first)
+    (intersect-y-span-sets '(((45 . 70) (25 . 50)))
+                           '(((25 . 50) (25 . 50))))
+  (((45 . 50) (25 . 50))))
+
+(deftest (intersect-y-span-sets abutting-vertical-regions set-1-first)
+    (intersect-y-span-sets '(((25 . 50) (25 . 50)))
+                           '(((50 . 75) (25 . 50))))
+  nil)
+
+(deftest (intersect-y-span-sets abutting-vertical-regions set-2-first)
+    (intersect-y-span-sets '(((50 . 75) (25 . 50)))
+                           '(((25 . 50) (25 . 50))))
+  nil)
+
+(deftest (intersect-y-span-sets disjoint-vertical-regions set-1-first)
+    (intersect-y-span-sets '(((25 . 50) (25 . 50)))
+                           '(((74 . 99) (25 . 50))))
+  nil)
+
+(deftest (intersect-y-span-sets disjoint-vertical-regions set-2-first)
+    (intersect-y-span-sets '(((74 . 99) (25 . 50)))
+                           '(((25 . 50) (25 . 50))))
+  nil)
+
+(deftest (intersect-y-span-sets overlapping-squares set-1-northwest)
+    (intersect-y-span-sets '(((25 . 75) (25 . 75)))
+                           '(((50 . 100) (50 . 100))))
+  (((50 . 75) (50 . 75))))
+
+(deftest (intersect-y-span-sets overlapping-squares set-1-northeast)
+    (intersect-y-span-sets '(((25 . 75) (50 . 100)))
+                           '(((50 . 100) (25 . 75))))
+  (((50 . 75) (50 . 75))))
+
+(deftest (intersect-y-span-sets overlapping-squares set-1-southeast)
+    (intersect-y-span-sets '(((50 . 100) (50 . 100)))
+                           '(((25 . 75) (25 . 75))))
+  (((50 . 75) (50 . 75))))
+
+(deftest (intersect-y-span-sets overlapping-squares set-1-southwest)
+    (intersect-y-span-sets '(((50 . 100) (25 . 75)))
+                           '(((25 . 75) (50 . 100))))
+  (((50 . 75) (50 . 75))))
+
+(deftest (intersect-y-span-sets cross-shape set-1-vertical)
+    (intersect-y-span-sets '(((25 . 100) (50 . 75)))
+                           '(((50 . 75) (25 . 100))))
+  (((50 . 75) (50 . 75))))
+
+(deftest (intersect-y-span-sets cross-shape set-2-vertical)
+    (intersect-y-span-sets '(((50 . 75) (25 . 100)))
+                           '(((25 . 100) (50 . 75))))
+  (((50 . 75) (50 . 75))))
+
+(deftest (intersect-y-span-sets checkerboard set-1-northwest)
+    (intersect-y-span-sets '(((25 . 50) (25 . 50))
+                             ((50 . 75) (50 . 75)))
+                           '(((25 . 50) (50 . 75))
+                             ((50 . 75) (25 . 50))))
+  nil)
+
+(deftest (intersect-y-span-sets checkerboard set-2-northwest)
+    (intersect-y-span-sets '(((25 . 50) (50 . 75))
+                             ((50 . 75) (25 . 50)))
+                           '(((25 . 50) (25 . 50))
+                             ((50 . 75) (50 . 75))))
+  nil)
+
+(deftest (intersect-y-span-sets cross-shape double-horizontal-with-covered-gaps)
+    (intersect-y-span-sets '(((25 . 100) (50 . 75)))
+                           '(((50 . 60) (25 . 50) (60 . 100))
+                             ((60 . 75) (25 . 60) (75 . 100))))
+  (((50 . 60) (60 . 75))
+   ((60 . 75) (50 . 60))))
 
 
 (deftest (differ-x-span-sets same-regions)
