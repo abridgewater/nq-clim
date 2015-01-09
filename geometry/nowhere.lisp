@@ -6,7 +6,8 @@
 
 (cl:defpackage :nq-clim/geometry/nowhere
   (:use :cl
-        :nq-clim/geometry/region)
+        :nq-clim/geometry/region
+        :nq-clim/geometry/transformation-protocol)
   (:export
    "+NOWHERE+"))
 (cl:in-package :nq-clim/geometry/nowhere)
@@ -41,5 +42,16 @@
   (if (and *print-readably* (not *read-eval*))
       (error 'print-not-readable :object object)
       (format stream "#.~S" '+nowhere+)))
+
+
+;; Transformations apply to points within a region, and +NOWHERE+ is
+;; empty.
+(defmethod transform-region (transformation (region nowhere))
+  (declare (ignore transformation))
+  region)
+
+(defmethod untransform-region (transformation (region nowhere))
+  (declare (ignore transformation))
+  region)
 
 ;;; EOF
