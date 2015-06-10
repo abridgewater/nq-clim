@@ -46,6 +46,7 @@
 ;; (defgeneric bury-mirror (port sheet))
 
 (defmethod port ((sheet sheet))
-  nil)
+  (when (sheet-grafted-p sheet)
+    (port (sheet-parent sheet))))
 
 ;;; EOF
