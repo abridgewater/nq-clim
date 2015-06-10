@@ -4,7 +4,7 @@
 ;;; Interface to CLX for gaming stuff.
 ;;;
 
-(cl:defpackage :game-stuff/clx-interface
+(cl:defpackage :nq-clim/clx-interface
   (:use :cl
         :nq-clim/frame/application-frame-functions
         :nq-clim/frame/manageable-frame-functions
@@ -34,7 +34,7 @@
    "+XK-RIGHT+"
    "+XK-ESC+"
    "+XK-ENTER+"))
-(cl:in-package :game-stuff/clx-interface)
+(cl:in-package :nq-clim/clx-interface)
 
 ;;; Important external variables.
 

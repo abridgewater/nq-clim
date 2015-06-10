@@ -17,7 +17,7 @@
         :nq-clim/backend/clx/medium
         :nq-clim/layout/space-requirement
         :nq-clim/frame/standard-application-frame
-        :game-stuff/clx-interface)
+        :nq-clim/clx-interface)
   (:export "START-EXAMPLE"))
 (in-package :rendering-1)
 
