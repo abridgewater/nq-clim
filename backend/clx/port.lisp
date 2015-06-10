@@ -10,6 +10,7 @@
         :nq-clim/port/port-protocol
         :nq-clim/port/port-discovery
         :nq-clim/port/basic-port)
+  (:import-from :xlib)
   (:export
    "CLX-PORT"
    "CLX-PORT-DISPLAY"))

@@ -8,6 +8,7 @@
   (:use :cl
         :nq-clim/medium/drawing
         :nq-clim/medium/basic-medium)
+  (:import-from :xlib)
   (:export
    "CLX-MEDIUM"
    "MAKE-CLX-MEDIUM"))

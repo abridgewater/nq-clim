@@ -15,6 +15,7 @@
         :nq-clim/sheet/sheet-geometry-protocol
         :nq-clim/sheet/mirror-functions
         :nq-clim/backend/clx/port)
+  (:import-from :xlib)
   (:export "CLX-GRAFT"
            "MAKE-CLX-GRAFT"))
 (cl:in-package :nq-clim/backend/clx/graft)

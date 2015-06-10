@@ -9,7 +9,8 @@
         :nq-clim/backend/clx/port
         :nq-clim/sheet/mirror-functions
         :nq-clim/geometry/bounding-rectangle-protocol
-        :nq-clim/sheet/sheet-hierarchy-protocol))
+        :nq-clim/sheet/sheet-hierarchy-protocol)
+  (:import-from :xlib))
 (cl:in-package :nq-clim/backend/clx/mirror)
 
 

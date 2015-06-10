@@ -18,6 +18,7 @@
         :nq-clim/backend/clx/port
         :nq-clim/backend/clx/graft
         :nq-clim/backend/clx/frame-sheet)
+  (:import-from :xlib)
   (:export
    "*PORT*"
    "*GRAFT*"
