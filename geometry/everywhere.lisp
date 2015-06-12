@@ -33,8 +33,8 @@
 (defconstant +everywhere+ (if (boundp '+everywhere+)
                            (symbol-value '+everywhere+)
                            (make-instance 'everywhere))
-  "The empty region, which contains no points and has no bounding
-  rectangle.")
+  "The all-inclusive region, which contains all points and has no
+bounding rectangle.")
 
 ;; When printing a EVERYWHERE, make it evaluate to the value of
 ;; +EVERYWHERE+, for print/read consistency.
