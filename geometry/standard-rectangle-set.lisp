@@ -7,7 +7,9 @@
 (cl:defpackage :nq-clim/geometry/standard-rectangle-set
   (:use :cl
         :nq-clim/geometry/bounding-rectangle-protocol
-        :nq-clim/geometry/region-set)
+        :nq-clim/geometry/nowhere
+        :nq-clim/geometry/region-set
+        :nq-clim/geometry/standard-rectangle)
   (:export
    "STANDARD-RECTANGLE-SET"))
 (cl:in-package :nq-clim/geometry/standard-rectangle-set)
@@ -252,5 +254,21 @@ Y-spans representing the difference of both sets."
          (max-x (apply #'max (mapcar #'cdar (mapcar #'last y-spans))))
          (max-y (cdaar (last y-spans))))
     (values min-x min-y max-x max-y)))
+
+
+(defun box-y-spans-as-region (y-spans)
+  (cond
+   ((null y-spans)
+    ;; Empty region
+    +nowhere+)
+   ((and (= 1 (length y-spans))
+         (= 2 (length (car y-spans))))
+    ;; A single rectangle
+    (destructuring-bind (((min-y . max-y) (min-x . max-x))) y-spans
+      (make-rectangle* min-x min-y max-x max-y)))
+   (t
+    ;; The general case
+    (make-instance 'standard-rectangle-set
+                   'y-spans y-spans))))
 
 ;;; EOF
