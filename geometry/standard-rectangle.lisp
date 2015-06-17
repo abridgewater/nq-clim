@@ -6,8 +6,9 @@
 
 (cl:defpackage :nq-clim/geometry/standard-rectangle
   (:use :cl
-        :nq-clim/geometry/rectangle-protocol
-        :nq-clim/geometry/bounding-rectangle-protocol)
+        :nq-clim/geometry/bounding-rectangle-protocol
+        :nq-clim/geometry/nowhere
+        :nq-clim/geometry/rectangle-protocol)
   (:export
    "STANDARD-RECTANGLE"
    ;; "MAKE-RECTANGLE"
@@ -37,10 +38,13 @@
 ;; POINTs, which we haven't implemented yet.
 
 (defun make-rectangle* (x1 y1 x2 y2)
-  (make-instance 'standard-rectangle
-                 'min-x (min x1 x2)
-                 'min-y (min y1 y2)
-                 'max-x (max x1 x2)
-                 'max-y (max y1 y2)))
+  (if (or (= x1 x2)
+          (= y1 y2))
+      +nowhere+
+      (make-instance 'standard-rectangle
+                     'min-x (min x1 x2)
+                     'min-y (min y1 y2)
+                     'max-x (max x1 x2)
+                     'max-y (max y1 y2))))
 
 ;;; EOF
