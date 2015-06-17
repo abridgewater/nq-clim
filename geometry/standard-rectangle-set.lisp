@@ -8,6 +8,7 @@
   (:use :cl
         :nq-clim/geometry/bounding-rectangle-protocol
         :nq-clim/geometry/nowhere
+        :nq-clim/geometry/rectangle-protocol
         :nq-clim/geometry/region-set
         :nq-clim/geometry/standard-rectangle)
   (:export
@@ -270,5 +271,15 @@ Y-spans representing the difference of both sets."
     ;; The general case
     (make-instance 'standard-rectangle-set
                    'y-spans y-spans))))
+
+(defmethod region-y-spans ((region rectangle))
+  (multiple-value-bind (min-x min-y max-x max-y) (rectangle-edges* region)
+    ;; Per CLIM II 3.2.4, a user is permitted to create a RECTANGLE
+    ;; with zero area, and the system is not permitted to return
+    ;; +NOWHERE+ for such a construction.  The "shape" for such a
+    ;; RECTANGLE is NIL.
+    (unless (or (= min-x max-x)
+                (= min-y max-y))
+      `(((,min-y . ,max-y) (,min-x . ,max-x))))))
 
 ;;; EOF
