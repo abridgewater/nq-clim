@@ -7,6 +7,7 @@
 (cl:defpackage :nq-clim/geometry/nowhere
   (:use :cl
         :nq-clim/geometry/region
+        :nq-clim/geometry/region-composition
         :nq-clim/geometry/transformation-protocol)
   (:export
    "+NOWHERE+"))
@@ -44,6 +45,18 @@
       (format stream "#.~S" '+nowhere+)))
 
 
+;; Region composition with +NOWHERE+ can be specified purely in terms
+;; of which region is +NOWHERE+.
+(defmethod region-union ((region-1 nowhere) region-2) region-2)
+(defmethod region-union (region-1 (region-2 nowhere)) region-1)
+
+(defmethod region-intersection ((region-1 nowhere) region-2) +nowhere+)
+(defmethod region-intersection (region-1 (region-2 nowhere)) +nowhere+)
+
+(defmethod region-difference ((region-1 nowhere) region-2) +nowhere+)
+(defmethod region-difference (region-1 (region-2 nowhere)) region-1)
+
+
 ;; Transformations apply to points within a region, and +NOWHERE+ is
 ;; empty.
 (defmethod transform-region (transformation (region nowhere))
@@ -53,5 +66,6 @@
 (defmethod untransform-region (transformation (region nowhere))
   (declare (ignore transformation))
   region)
+
 
 ;;; EOF
