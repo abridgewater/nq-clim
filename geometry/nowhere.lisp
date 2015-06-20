@@ -6,6 +6,7 @@
 
 (cl:defpackage :nq-clim/geometry/nowhere
   (:use :cl
+        :nq-clim/clim-sys/named-constant-mixin
         :nq-clim/geometry/region
         :nq-clim/geometry/region-composition
         :nq-clim/geometry/transformation-protocol)
@@ -15,34 +16,15 @@
 
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  ;; The NOWHERE class and corresponding MAKE-LOAD-FORM method both
-  ;; need to be available at compile-time in order to set up +NOWHERE+
-  ;; properly.
-  (defclass nowhere (region) ())
+  ;; The NOWHERE class needs to be available at compile-time in order
+  ;; to set up +NOWHERE+ properly.
+  (defclass nowhere (region named-constant-mixin) ()))
 
-  ;; Any references to an instance of NOWHERE are to be dumped as a
-  ;; symbol value access to +NOWHERE+ (as a singleton instance).
-  (defmethod make-load-form ((object nowhere) &optional environment)
-    (declare (ignore environment))
-    '(symbol-value +nowhere+)))
+(define-named-constant +nowhere+ nowhere)
 
-;; If this is the first definition of +NOWHERE+, create an instance of
-;; NOWHERE to use.  Otherwise, use the existing value.  This stunt is
-;; usually (and illegally) pulled for non-EQL "constant" values.  In
-;; this case, we're making sure that the value will always be EQ, even
-;; through print/read and compile-file/load.
-(defconstant +nowhere+ (if (boundp '+nowhere+)
-                           (symbol-value '+nowhere+)
-                           (make-instance 'nowhere))
+(setf (documentation '+nowhere+ 'variable)
   "The empty region, which contains no points and has no bounding
   rectangle.")
-
-;; When printing a NOWHERE, make it evaluate to the value of
-;; +NOWHERE+, for print/read consistency.
-(defmethod print-object ((object nowhere) stream)
-  (if (and *print-readably* (not *read-eval*))
-      (error 'print-not-readable :object object)
-      (format stream "#.~S" '+nowhere+)))
 
 
 ;; Region composition with +NOWHERE+ can be specified purely in terms
