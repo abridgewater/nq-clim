@@ -6,6 +6,7 @@
 
 (cl:defpackage :nq-clim/geometry/identity-transformation
   (:use :cl
+        :nq-clim/clim-sys/named-constant-mixin
         :nq-clim/geometry/transformation
         :nq-clim/geometry/transformation-protocol)
   (:export
@@ -13,30 +14,10 @@
 (cl:in-package :nq-clim/geometry/identity-transformation)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
- (defclass identity-transformation (transformation) ()))
+  (defclass identity-transformation (transformation named-constant-mixin) ()))
 
-;; There is a bit of magic here in order to deal with a particuar
-;; aspect of CLIM II 5.1, specifically the requirement that
-;; +IDENTITY-TRANSFORMATION+ be a constant.  First off, we arrange for
-;; the existing value of +IDENTITY-TRANSFORMATION+ to be used in its
-;; definition if it is already bound (a straightforward and well-known
-;; hack to avoid redefinition warnings).  Second, we define a
-;; MAKE-LOAD-FORM method to cover any direct references to
-;; +IDENTITY-TRANSFORMATION+ (as a constant, it counts, per CLHS
-;; 3.2.2.3, as a literal object in source code), using a call to
-;; SYMBOL-VALUE of +IDENTITY-TRANSFORMATION+ at load time.  This
-;; probably should be a well-known pattern, but I suspect that not
-;; many people define constants that are class instances (I know that
-;; the McCLIM developers don't, for example).
+(define-named-constant +identity-transformation+ identity-transformation)
 
-(defmethod make-load-form ((object identity-transformation) &optional environment)
-  (declare (ignore environment))
-  '(symbol-value '+identity-transformation+))
-
-(defconstant +identity-transformation+
-  (if (boundp '+identity-transformation+)
-      (symbol-value '+identity-transformation+)
-      (make-instance 'identity-transformation)))
 
 (defmethod transformation-equal ((transformation1 identity-transformation)
                                  transformation2)
