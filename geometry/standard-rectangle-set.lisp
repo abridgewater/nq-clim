@@ -9,6 +9,7 @@
         :nq-clim/geometry/bounding-rectangle-protocol
         :nq-clim/geometry/nowhere
         :nq-clim/geometry/rectangle-protocol
+        :nq-clim/geometry/rectilinear-region
         :nq-clim/geometry/region-set
         :nq-clim/geometry/standard-rectangle)
   (:export
@@ -16,7 +17,7 @@
 (cl:in-package :nq-clim/geometry/standard-rectangle-set)
 
 
-(defclass standard-rectangle-set (region-set)
+(defclass standard-rectangle-set (region-set rectilinear-region)
   ((y-spans :initarg y-spans :reader region-y-spans)))
 
 (defmethod bounding-rectangle* ((region standard-rectangle-set))

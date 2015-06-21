@@ -7,6 +7,7 @@
 (cl:defpackage :nq-clim/geometry/rectangle-protocol
   (:use :cl
         :nq-clim/geometry/bounding-rectangle-protocol
+        :nq-clim/geometry/rectilinear-region
         :nq-clim/geometry/region)
   (:export
    "RECTANGLE"
@@ -16,7 +17,7 @@
 
 
 ;; The protocol class.
-(defclass rectangle (area) ())
+(defclass rectangle (rectilinear-region) ())
 
 ;; The protocol predicate.
 (defun rectanglep (object)
