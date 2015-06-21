@@ -7,7 +7,9 @@
 (cl:defpackage :nq-clim/geometry/everywhere
   (:use :cl
         :nq-clim/clim-sys/named-constant-mixin
+        :nq-clim/geometry/nowhere
         :nq-clim/geometry/region
+        :nq-clim/geometry/region-composition
         :nq-clim/geometry/transformation-protocol)
   (:export
    "+EVERYWHERE+"))
@@ -24,6 +26,25 @@
 (setf (documentation '+everywhere+ 'variable)
   "The all-inclusive region, which contains all points and has no
 bounding rectangle.")
+
+
+;; Region composition with +EVERYWHERE+ can be specified purely in
+;; terms of which region is +EVERYWHERE+...  Except for one of the
+;; cases of REGION-DIFFERENCE, for which CLIM II is inconsistent.
+(defmethod region-union ((region-1 everywhere) region-2) +everywhere+)
+(defmethod region-union (region-1 (region-2 everywhere)) +everywhere+)
+
+(defmethod region-intersection ((region-1 everywhere) region-2) region-2)
+(defmethod region-intersection (region-1 (region-2 everywhere)) region-1)
+
+(defmethod region-difference ((region-1 everywhere) region-2)
+  (cond ((eq region-2 +nowhere+)
+         +everywhere+)
+        ((eq region-2 +everywhere+)
+         +nowhere+)
+        (t
+         (error "Per the definitions of REGION-DIFFERENCE and REGION-SET in CLIM II 3.1.2, REGION-DIFFERENCE with REGION-1 of +EVERYWHERE+ must have REGION-2 of +NOWHERE+ or +EVERYWHERE+, not anything else"))))
+(defmethod region-difference (region-1 (region-2 everywhere)) +nowhere+)
 
 
 ;; Transformations apply to points within a region, and while
