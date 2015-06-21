@@ -18,7 +18,7 @@
 
 
 (defclass standard-rectangle-set (region-set rectilinear-region)
-  ((y-spans :initarg y-spans :reader region-y-spans)))
+  ((y-spans :initarg :y-spans :reader region-y-spans)))
 
 (defmethod bounding-rectangle* ((region standard-rectangle-set))
   ;; Unfortunately, this relies on intimate knowledge of the structure
@@ -31,20 +31,5 @@
          (max-y (cdaar (last y-spans))))
     (values min-x min-y max-x max-y)))
 
-
-(defun box-y-spans-as-region (y-spans)
-  (cond
-   ((null y-spans)
-    ;; Empty region
-    +nowhere+)
-   ((and (= 1 (length y-spans))
-         (= 2 (length (car y-spans))))
-    ;; A single rectangle
-    (destructuring-bind (((min-y . max-y) (min-x . max-x))) y-spans
-      (make-rectangle* min-x min-y max-x max-y)))
-   (t
-    ;; The general case
-    (make-instance 'standard-rectangle-set
-                   'y-spans y-spans))))
 
 ;;; EOF
