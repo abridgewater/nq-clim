@@ -9,6 +9,7 @@
         :nq-clim/sheet/sheet
         :nq-clim/sheet/sheet-geometry-mixin
         :nq-clim/sheet/sheet-hierarchy-protocol
+        :nq-clim/sheet/sheet-notification-protocol
         :nq-clim/sheet/sheet-parent-mixin)
   (:export
    "BASIC-SHEET"))
