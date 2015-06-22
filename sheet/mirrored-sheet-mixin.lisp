@@ -35,4 +35,8 @@
   ;; directly or indirectly.
   (realize-mirror (port (sheet-parent sheet)) sheet))
 
+(defmethod note-sheet-degrafted :after ((sheet mirrored-sheet-mixin))
+  ;; Destroy the mirror when the sheet is degrafted.
+  (destroy-mirror (port sheet) sheet))
+
 ;;; EOF
