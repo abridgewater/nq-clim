@@ -91,7 +91,7 @@
 
   (setf (frame-top-level-sheet frame) *sheet*)
 
-  (setf *window* (realize-mirror *port* *sheet*))
+  (setf *window* (sheet-mirror *sheet*))
 
   (setf (xlib:window-background *window*)
         (xlib:screen-white-pixel

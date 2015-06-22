@@ -6,8 +6,10 @@
 
 (cl:defpackage :nq-clim/sheet/mirrored-sheet-mixin
   (:use :cl
+        :nq-clim/port/port
         :nq-clim/sheet/mirror-functions
-        :nq-clim/port/port)
+        :nq-clim/sheet/sheet-hierarchy-protocol
+        :nq-clim/sheet/sheet-notification-protocol)
   (:export
    "MIRRORED-SHEET-MIXIN"))
 (cl:in-package :nq-clim/sheet/mirrored-sheet-mixin)
@@ -25,5 +27,12 @@
 (defmethod destroy-mirror :after (port (mirrored-sheet mirrored-sheet-mixin))
   (setf (slot-value mirrored-sheet 'port) nil)
   (setf (slot-value mirrored-sheet 'mirror) nil))
+
+(defmethod note-sheet-grafted :before ((sheet mirrored-sheet-mixin))
+  ;; Realize the mirror when the sheet is grafted.  We can't call PORT
+  ;; on SHEET, as it's a straight slot reader for us, but we CAN call
+  ;; it for its parent, which should already have been mirrored either
+  ;; directly or indirectly.
+  (realize-mirror (port (sheet-parent sheet)) sheet))
 
 ;;; EOF
