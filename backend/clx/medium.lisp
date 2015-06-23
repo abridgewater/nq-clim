@@ -6,6 +6,7 @@
 
 (cl:defpackage :nq-clim/backend/clx/medium
   (:use :cl
+        :nq-clim/medium/association
         :nq-clim/medium/drawing
         :nq-clim/medium/basic-medium)
   (:import-from :xlib)
@@ -16,7 +17,7 @@
 
 
 (defclass clx-medium (basic-medium)
-  ((drawable :initarg drawable)
+  ((drawable :initarg drawable :reader medium-drawable)
    (gcontext :initarg gcontext)))
 
 (defun make-clx-medium (drawable gcontext)
