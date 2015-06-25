@@ -7,8 +7,9 @@
 (cl:defpackage :nq-clim/backend/clx/medium
   (:use :cl
         :nq-clim/medium/association
+        :nq-clim/medium/basic-medium
         :nq-clim/medium/drawing
-        :nq-clim/medium/basic-medium)
+        :nq-clim/sheet/mirror-functions)
   (:import-from :xlib)
   (:export
    "CLX-MEDIUM"
@@ -22,6 +23,15 @@
 
 (defun make-clx-medium (drawable gcontext)
   (make-instance 'clx-medium 'drawable drawable 'gcontext gcontext))
+
+
+(defmethod engraft-medium :after ((medium clx-medium) port sheet)
+  ;; FIXME: Set clipping region and transform based on SHEET's
+  ;; relation to its mirror.
+  (setf (slot-value medium 'drawable) (sheet-mirror sheet)))
+
+(defmethod degraft-medium :after ((medium clx-medium) port sheet)
+  (setf (slot-value medium 'drawable) nil))
 
 
 (defmethod medium-draw-point* ((medium clx-medium) x y)
