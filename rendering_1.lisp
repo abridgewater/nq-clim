@@ -14,7 +14,6 @@
 (defpackage :rendering-1
   (:use :common-lisp
         :nq-clim/medium/drawing
-        :nq-clim/backend/clx/medium
         :nq-clim/layout/space-requirement
         :nq-clim/frame/standard-application-frame
         :nq-clim/clx-interface)
@@ -151,12 +150,6 @@
   (xlib:clear-area *window* :x 0 :y 0 :width 256 :height 256 :exposures-p nil)
   (draw-maze))
 
-(defun create-gc (screen)
-  (xlib:create-gcontext :foreground (xlib:screen-black-pixel screen)
-                        :background (xlib:screen-white-pixel screen)
-                        :line-width 1 :cap-style :projecting
-                        :drawable (xlib:screen-root screen)))
-
 (defun handle-key-press (key-code)
   (let ((keysym (xlib:keycode->keysym *display* key-code 0)))
     (declare (integer keysym))
@@ -206,9 +199,8 @@
                       :max-width 256 :max-height 256)
                      :frame (make-instance 'standard-application-frame
                                            :pretty-name "Dungeon Crawl -- Rendering 1"))
-    (setf *medium*
-          (make-clx-medium *window*
-                           (create-gc (xlib:display-default-screen *display*))))
+    (setf *medium* (nq-clim/medium/association:allocate-medium *port* *sheet*))
+    (nq-clim/medium/association:engraft-medium *medium* *port* *sheet*)
     (setf (xlib:window-event-mask *window*)
           (xlib:make-event-mask :button-press :button-release
                                 :exposure :key-press))
