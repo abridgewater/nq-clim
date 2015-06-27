@@ -91,73 +91,73 @@
   (if (not (aref *map-data* (+ *position* *frontstep*)))
       (setf *position* (+ *position* *frontstep*))))
 
-(defun draw-line (x1 y1 x2 y2)
-  (medium-draw-line* *medium* x1 y1 x2 y2))
+(defun draw-line (medium x1 y1 x2 y2)
+  (medium-draw-line* medium x1 y1 x2 y2))
 
 
-(defun draw-left-side (position base size)
+(defun draw-left-side (medium position base size)
   (if (aref *map-data* (+ position *leftstep*))
       (progn
 	;; There is a wall to the left of this position, so we draw it.
-	(draw-line base base (+ base size) (+ base size))
-	(draw-line base (- 255 base) (+ base size) (- 255 base size)))
+	(draw-line medium base base (+ base size) (+ base size))
+	(draw-line medium base (- 255 base) (+ base size) (- 255 base size)))
       (progn
-	;; There is no wall to the left of this position, so there is one
-	;; ahead of it. We draw that one.
-	(draw-line base (+ base size) (+ base size) (+ base size))
-	(draw-line base (- 255 base size) (+ base size) (- 255 base size))))
+        ;; There is no wall to the left of this position, so there is one
+        ;; ahead of it. We draw that one.
+        (draw-line medium base (+ base size) (+ base size) (+ base size))
+        (draw-line medium base (- 255 base size) (+ base size) (- 255 base size))))
 
   ;; Draw the vertical line for this wall segment.
-  (draw-line (+ base size) (+ base size) (+ base size) (- 255 base size)))
+  (draw-line medium (+ base size) (+ base size) (+ base size) (- 255 base size)))
 
-(defun draw-right-side (position base size)
+(defun draw-right-side (medium position base size)
   (if (aref *map-data* (- position *leftstep*))
       (progn
 	;; There is a wall to the right of this position, so we draw it.
-	(draw-line (- 255 base) base (- 255 base size) (+ base size))
-	(draw-line (- 255 base) (- 255 base) (- 255 base size) (- 255 base size)))
+	(draw-line medium (- 255 base) base (- 255 base size) (+ base size))
+	(draw-line medium (- 255 base) (- 255 base) (- 255 base size) (- 255 base size)))
       (progn
 	;; There is no wall to the right of this position, so there is one
 	;; ahead of it. We draw that one.
-	(draw-line (- 255 base) (+ base size) (- 255 base size) (+ base size))
-	(draw-line (- 255 base) (- 255 base size) (- 255 base size) (- 255 base size))))
+	(draw-line medium (- 255 base) (+ base size) (- 255 base size) (+ base size))
+	(draw-line medium (- 255 base) (- 255 base size) (- 255 base size) (- 255 base size))))
   
   ;; Draw the vertical line for this wall segment.
-  (draw-line (- 255 base size) (+ base size) (- 255 base size) (- 255 base size)))
+  (draw-line medium (- 255 base size) (+ base size) (- 255 base size) (- 255 base size)))
 
-(defun draw-maze ()
+(defun draw-maze (medium)
   "Draw the maze as seen from the player's current position and facing."
   (let ((base 0)
 	(position *position*))
     (dotimes (depth 4)
       ;; size values determined empirically.
       (let ((size (elt '(10 50 40 15) depth)))
-	(draw-left-side position base size)
-	(draw-right-side position base size)
+	(draw-left-side medium position base size)
+	(draw-right-side medium position base size)
 	
 	(incf position *frontstep*)
 	(incf base size)
 	
 	;; Draw the facing wall if there is one.
 	(when (aref *map-data* position)
-	  (draw-line base base (- 255 base) base)
-	  (draw-line base (- 255 base) (- 255 base) (- 255 base))
+	  (draw-line medium base base (- 255 base) base)
+	  (draw-line medium base (- 255 base) (- 255 base) (- 255 base))
 	  (return-from draw-maze)))))
   (values))
 
 
-(defun force-redraw ()
+(defun force-redraw (medium)
   (xlib:clear-area *window* :x 0 :y 0 :width 256 :height 256 :exposures-p nil)
-  (draw-maze))
+  (draw-maze medium))
 
 (defun handle-key-press (key-code)
   (let ((keysym (xlib:keycode->keysym *display* key-code 0)))
     (declare (integer keysym))
     (cond
       ;; For some reason, the keysyms I need aren't defined in CLX.
-      ((= keysym +xk-left+)  (turn-left)    (force-redraw))
-      ((= keysym +xk-right+) (turn-right)   (force-redraw))
-      ((= keysym +xk-up+)    (move-forward) (force-redraw)))))
+      ((= keysym +xk-left+)  (turn-left)    (force-redraw *medium*))
+      ((= keysym +xk-right+) (turn-right)   (force-redraw *medium*))
+      ((= keysym +xk-up+)    (move-forward) (force-redraw *medium*)))))
 
 (defgeneric event-type (event))
 
@@ -175,7 +175,7 @@
   (let ((event (read-event)))
     (case (event-type event)
       (:exposure
-       (draw-maze))
+       (draw-maze *medium*))
       (:button-release
        (throw '%exit-event-loop nil))
       (:key-press
