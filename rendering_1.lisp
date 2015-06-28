@@ -14,6 +14,7 @@
 (defpackage :rendering-1
   (:use :common-lisp
         :nq-clim/medium/drawing
+        :nq-clim/medium/graphics-method
         :nq-clim/layout/space-requirement
         :nq-clim/frame/standard-application-frame
         :nq-clim/clx-interface)
@@ -91,39 +92,36 @@
   (if (not (aref *map-data* (+ *position* *frontstep*)))
       (setf *position* (+ *position* *frontstep*))))
 
-(defun draw-line (medium x1 y1 x2 y2)
-  (medium-draw-line* medium x1 y1 x2 y2))
-
 
 (defun draw-left-side (medium position base size)
   (if (aref *map-data* (+ position *leftstep*))
       (progn
 	;; There is a wall to the left of this position, so we draw it.
-	(draw-line medium base base (+ base size) (+ base size))
-	(draw-line medium base (- 255 base) (+ base size) (- 255 base size)))
+	(draw-line* medium base base (+ base size) (+ base size))
+	(draw-line* medium base (- 255 base) (+ base size) (- 255 base size)))
       (progn
         ;; There is no wall to the left of this position, so there is one
         ;; ahead of it. We draw that one.
-        (draw-line medium base (+ base size) (+ base size) (+ base size))
-        (draw-line medium base (- 255 base size) (+ base size) (- 255 base size))))
+        (draw-line* medium base (+ base size) (+ base size) (+ base size))
+        (draw-line* medium base (- 255 base size) (+ base size) (- 255 base size))))
 
   ;; Draw the vertical line for this wall segment.
-  (draw-line medium (+ base size) (+ base size) (+ base size) (- 255 base size)))
+  (draw-line* medium (+ base size) (+ base size) (+ base size) (- 255 base size)))
 
 (defun draw-right-side (medium position base size)
   (if (aref *map-data* (- position *leftstep*))
       (progn
 	;; There is a wall to the right of this position, so we draw it.
-	(draw-line medium (- 255 base) base (- 255 base size) (+ base size))
-	(draw-line medium (- 255 base) (- 255 base) (- 255 base size) (- 255 base size)))
+	(draw-line* medium (- 255 base) base (- 255 base size) (+ base size))
+	(draw-line* medium (- 255 base) (- 255 base) (- 255 base size) (- 255 base size)))
       (progn
 	;; There is no wall to the right of this position, so there is one
 	;; ahead of it. We draw that one.
-	(draw-line medium (- 255 base) (+ base size) (- 255 base size) (+ base size))
-	(draw-line medium (- 255 base) (- 255 base size) (- 255 base size) (- 255 base size))))
+	(draw-line* medium (- 255 base) (+ base size) (- 255 base size) (+ base size))
+	(draw-line* medium (- 255 base) (- 255 base size) (- 255 base size) (- 255 base size))))
   
   ;; Draw the vertical line for this wall segment.
-  (draw-line medium (- 255 base size) (+ base size) (- 255 base size) (- 255 base size)))
+  (draw-line* medium (- 255 base size) (+ base size) (- 255 base size) (- 255 base size)))
 
 (defun draw-maze (medium)
   "Draw the maze as seen from the player's current position and facing."
@@ -140,8 +138,8 @@
 	
 	;; Draw the facing wall if there is one.
 	(when (aref *map-data* position)
-	  (draw-line medium base base (- 255 base) base)
-	  (draw-line medium base (- 255 base) (- 255 base) (- 255 base))
+	  (draw-line* medium base base (- 255 base) base)
+	  (draw-line* medium base (- 255 base) (- 255 base) (- 255 base))
 	  (return-from draw-maze)))))
   (values))
 
