@@ -7,6 +7,7 @@
                              :nq-clim/backend/clx/medium
                              :nq-clim/backend/clx/mirror
                              :nq-clim/medium/drawing
+                             :nq-clim/medium/graphics-method
                              :nq-clim/frame/standard-application-frame))
 
 (register-system-packages :clx '(:xlib))
