@@ -34,11 +34,13 @@
 ;; of CLASS to use.  Otherwise, use the existing value.  This stunt is
 ;; usually (and illegally) pulled for non-EQL "constant" values.  In
 ;; this case, we're making sure that the value will always be EQ, even
-;; through print/read and compile-file/load.
+;; through print/read and compile-file/load.  INITARGS are not
+;; evaluated unless a new instances is being created.
 (defmacro define-named-constant (name class &rest initargs)
   `(defconstant ,name
      (if (boundp ',name)
          (symbol-value ',name)
-       (apply #'make-instance ',class 'constant-name ',name ,initargs))))
+         (apply #'make-instance ',class 'constant-name ',name
+                (funcall (lambda () (list ,@initargs)))))))
 
 ;;; EOF
