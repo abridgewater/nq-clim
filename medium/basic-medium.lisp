@@ -6,7 +6,9 @@
 
 (cl:defpackage :nq-clim/medium/basic-medium
   (:use :cl
+        :nq-clim/ink/standard-color
         :nq-clim/medium/association
+        :nq-clim/medium/medium-components
         :nq-clim/medium/drawing
         :nq-clim/medium/drawing-options
         :nq-clim/medium/medium)
@@ -17,7 +19,10 @@
 
 (defclass basic-medium (medium)
   ;; FIXME: This is the hook for "user" transformations.
-  ((sheet :initform nil :reader medium-sheet)))
+  ((sheet :initform nil :reader medium-sheet)
+   (foreground :initform +black+ :accessor medium-foreground)
+   (background :initform +white+ :accessor medium-background)
+   (ink :initform +black+ :accessor medium-ink)))
 
 
 (defmethod engraft-medium ((medium basic-medium) port sheet)
