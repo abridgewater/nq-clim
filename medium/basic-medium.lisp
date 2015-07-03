@@ -33,11 +33,17 @@
   (setf (slot-value medium 'sheet) nil))
 
 (defmethod invoke-with-drawing-options ((medium basic-medium) continuation &rest drawing-options)
-  (declare (ignore drawing-options))
-  ;; FIXME: Once we have medium properties, set them based on
-  ;; DRAWING-OPTIONS...  And reset them afterwards, using
-  ;; UNWIND-PROTECT.
-  (funcall continuation))
+  (let (old-ink)
+    (destructuring-bind
+          (&key ink)
+        drawing-options
+      ;; FIXME: Support other drawing options as well.
+      (when ink
+        (shiftf old-ink (medium-ink medium) ink))
+      (unwind-protect
+           (funcall continuation)
+        (when old-ink
+          (setf (medium-ink medium) old-ink))))))
 
 #+(or)
 (defmethod medium-draw-line* :around ((medium basic-medium) x1 y1 x2 y2)
