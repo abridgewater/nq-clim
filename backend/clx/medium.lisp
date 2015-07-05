@@ -70,27 +70,35 @@
   (setf (slot-value medium 'drawable) nil))
 
 
+(defun synchronize-medium (clx-medium)
+  (declare (ignore clx-medium)))
+
 (defmethod medium-draw-point* ((medium clx-medium) x y)
+  (synchronize-medium medium)
   (with-slots (drawable gcontext)
       medium
     (xlib:draw-point drawable gcontext x y)))
 
 (defmethod medium-draw-points* ((medium clx-medium) coord-seq)
+  (synchronize-medium medium)
   (with-slots (drawable gcontext)
       medium
     (xlib:draw-points drawable gcontext coord-seq)))
 
 (defmethod medium-draw-line* ((medium clx-medium) x1 y1 x2 y2)
+  (synchronize-medium medium)
   (with-slots (drawable gcontext)
       medium
     (xlib:draw-line drawable gcontext x1 y1 x2 y2)))
 
 (defmethod medium-draw-lines* ((medium clx-medium) coord-seq)
+  (synchronize-medium medium)
   (with-slots (drawable gcontext)
       medium
     (xlib:draw-segments drawable gcontext coord-seq)))
 
 (defmethod medium-draw-polygon* ((medium clx-medium) coord-seq closed filled)
+  (synchronize-medium medium)
   (with-slots (drawable gcontext)
       medium
     (if (and closed (not filled))
@@ -101,6 +109,7 @@
         (xlib:draw-lines drawable gcontext coord-seq :fill-p filled))))
 
 (defmethod medium-draw-rectangle* ((medium clx-medium) x1 y1 x2 y2 filled)
+  (synchronize-medium medium)
   (with-slots (drawable gcontext)
       medium
     (xlib:draw-rectangle drawable gcontext x1 y1 (- x2 x1) (- y2 y1) filled)))
@@ -116,6 +125,7 @@
      collect (- y2 y1)))
 
 (defmethod medium-draw-rectangles* ((medium clx-medium) coord-seq filled)
+  (synchronize-medium medium)
   (with-slots (drawable gcontext)
       medium
     (let ((fixed-coord-seq (fix-rectangle-coord-seq-for-x coord-seq)))
