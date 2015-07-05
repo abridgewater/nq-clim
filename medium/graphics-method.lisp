@@ -31,13 +31,21 @@
 
 
 (define-graphics-method draw-point*
-    medium-draw-point* (x y))
+    medium-draw-point* (x y) ()
+    (ink clipping-region transformation
+         line-style line-thickness line-unit))
 (define-graphics-method draw-points*
-    medium-draw-points* (coord-seq))
+    medium-draw-points* (coord-seq) ()
+    (ink clipping-region transformation
+         line-style line-thickness line-unit))
 (define-graphics-method draw-line*
-    medium-draw-line* (x1 y1 x2 y2))
+    medium-draw-line* (x1 y1 x2 y2) ()
+    (ink clipping-region transformation
+         line-style line-thickness line-unit line-dashes line-cap-shape))
 (define-graphics-method draw-lines*
-    medium-draw-lines* (coord-seq))
+    medium-draw-lines* (coord-seq) ()
+    (ink clipping-region transformation
+         line-style line-thickness line-unit line-dashes line-cap-shape))
 
  ;; FIXME: The CLOSED and FILLED arguments below are supposed to be
  ;; keywords.  Or aren't supposed to be here at all in the case of
@@ -47,10 +55,16 @@
  ;; other drawing functions that we'll need later require other
  ;; keyword arguments.
 (define-graphics-method draw-polygon*
-    medium-draw-polygon* (coord-seq closed filled))
+    medium-draw-polygon* (coord-seq closed filled) ()
+    (ink clipping-region transformation
+         line-style line-thickness line-unit line-dashes line-joint-shape line-cap-shape))
 (define-graphics-method draw-rectangle*
-    medium-draw-rectangle* (x1 y1 x2 y2 filled))
+    medium-draw-rectangle* (x1 y1 x2 y2 filled) ()
+    (ink clipping-region transformation
+         line-style line-thickness line-unit line-dashes line-joint-shape))
 (define-graphics-method draw-rectangles*
-    medium-draw-rectangles* (coord-seq filled))
+    medium-draw-rectangles* (coord-seq filled) ()
+    (ink clipping-region transformation
+         line-style line-thickness line-unit line-dashes line-joint-shape))
 
 ;;; EOF
