@@ -7,9 +7,11 @@
 (cl:defpackage :nq-clim/backend/clx/medium
   (:use :cl
         :nq-clim/backend/clx/port
+        :nq-clim/ink/color
         :nq-clim/medium/association
         :nq-clim/medium/basic-medium
         :nq-clim/medium/drawing
+        :nq-clim/medium/medium-components
         :nq-clim/sheet/mirror-functions)
   (:import-from :xlib)
   (:export
@@ -20,7 +22,9 @@
 (defclass clx-medium (basic-medium)
   ((drawable :initarg drawable :reader medium-drawable)
    (colormap :initarg colormap)
-   (gcontext :initarg gcontext)))
+   (gcontext :initarg gcontext)
+   (last-ink :initform nil)
+   (last-background :initform nil)))
 
 (defun make-clx-medium (drawable colormap gcontext)
   (make-instance 'clx-medium
@@ -75,7 +79,23 @@
 
 
 (defun synchronize-medium (clx-medium)
-  (declare (ignore clx-medium)))
+  (let ((last-ink (slot-value clx-medium 'last-ink))
+        (ink (medium-ink clx-medium)))
+    (unless (and last-ink
+                 (or (eq last-ink ink)
+                     (every #'=
+                            (multiple-value-list (color-rgb last-ink))
+                            (multiple-value-list (color-rgb ink)))))
+      (setf (slot-value clx-medium 'last-ink) ink)))
+  
+  (let ((last-background (slot-value clx-medium 'last-background))
+        (background (medium-background clx-medium)))
+    (unless (and last-background
+                 (or (eq last-background background)
+                     (every #'=
+                            (multiple-value-list (color-rgb last-background))
+                            (multiple-value-list (color-rgb background)))))
+      (setf (slot-value clx-medium 'last-background) background))))
 
 (defmethod medium-draw-point* ((medium clx-medium) x y)
   (synchronize-medium medium)
