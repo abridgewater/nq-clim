@@ -13,8 +13,7 @@
         :nq-clim/sheet/mirror-functions)
   (:import-from :xlib)
   (:export
-   "CLX-MEDIUM"
-   "MAKE-CLX-MEDIUM"))
+   "CLX-MEDIUM"))
 (cl:in-package :nq-clim/backend/clx/medium)
 
 
