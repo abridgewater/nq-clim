@@ -145,7 +145,7 @@
 
 
 (defun force-redraw (medium)
-  (xlib:clear-area *window* :x 0 :y 0 :width 256 :height 256 :exposures-p nil)
+  (draw-rectangle* *medium* 0 0 256 256 :ink nq-clim/ink/standard-color:+white+)
   (draw-maze medium))
 
 (defun handle-key-press (key-code)
