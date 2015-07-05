@@ -35,33 +35,11 @@
 
 (defmethod allocate-medium ((port clx-port) sheet)
   (declare (optimize (debug 3)))
-  (let* ((window (sheet-mirror sheet))
-         ;; There are a few dreadful things going on here.  First is
-         ;; that we are setting default values for various things to
-         ;; suit what is required for our initial test program, until
-         ;; such time as we have a "real" interface for setting them.
-         ;; Second is that we need to ask the screen for a couple of
-         ;; those values, but we can't get the screen when we start
-         ;; from a window (sheet-mirror), so we obtain the root window
-         ;; for the mirror and then find it as the root window in the
-         ;; list of screens associated with the display.  Third is
-         ;; that the two root windows are DISJOINT.  They have the
-         ;; same resource ID, they're on the same server, accessed
-         ;; through the same display connection, but are not EQ!  So
-         ;; we compare them specifically by resource ID.  What a
-         ;; performance!
-         (root-window (xlib:drawable-root window))
-         (display (clx-port-display port))
-         (screen (find (xlib:drawable-id root-window)
-                       (xlib:display-roots display)
-                       :key #'(lambda (x) (xlib:drawable-id
-                                           (xlib:screen-root x))))))
+  (let ((window (sheet-mirror sheet)))
     (make-clx-medium
      nil
      (xlib:window-colormap window)
      (xlib:create-gcontext
-      :foreground (xlib:screen-black-pixel screen)
-      :background (xlib:screen-white-pixel screen)
       :line-width 1 :cap-style :projecting
       :drawable window))))
 
