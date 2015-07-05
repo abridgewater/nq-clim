@@ -19,10 +19,14 @@
 
 (defclass clx-medium (basic-medium)
   ((drawable :initarg drawable :reader medium-drawable)
+   (colormap :initarg colormap)
    (gcontext :initarg gcontext)))
 
-(defun make-clx-medium (drawable gcontext)
-  (make-instance 'clx-medium 'drawable drawable 'gcontext gcontext))
+(defun make-clx-medium (drawable colormap gcontext)
+  (make-instance 'clx-medium
+                 'drawable drawable
+                 'colormap colormap
+                 'gcontext gcontext))
 
 
 (defmethod allocate-medium ((port clx-port) sheet)
@@ -50,6 +54,7 @@
                                            (xlib:screen-root x))))))
     (make-clx-medium
      nil
+     (xlib:window-colormap window)
      (xlib:create-gcontext
       :foreground (xlib:screen-black-pixel screen)
       :background (xlib:screen-white-pixel screen)
