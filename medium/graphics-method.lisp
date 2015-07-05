@@ -20,6 +20,51 @@
 (cl:in-package :nq-clim/medium/graphics-method)
 
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+ (defun parse-keyword-parameter (keyword-parameter)
+   ;; Given KEYWORD-PARAMETER, an ordinary lambda-list entry for a
+   ;; keyword parameter, return the variable name, the indicator, the
+   ;; default value, and the presence variable as values.  If there is
+   ;; no default value or presence variable, then return NIL for those
+   ;; terms.
+   (when (symbolp keyword-parameter)
+     ;; Canonicalize to list form.
+     (setf keyword-parameter (list keyword-parameter)))
+   (destructuring-bind (parameter-name &optional default-value present-p)
+       keyword-parameter
+     (when (symbolp parameter-name)
+       ;; Canonicalize to list form.
+       (setf parameter-name
+             (list (intern (symbol-name parameter-name) :keyword)
+                   parameter-name)))
+     (values (cadr parameter-name)
+             (car parameter-name)
+             default-value
+             present-p)))
+
+ (defun process-keyargs-for-recovery (keyword-parameter-list)
+   ;; From a keyword parameter list segment (each element of which is a
+   ;; keyword parameter specifier for an ordinary lambda list), produce
+   ;; a new parameter list segment which includes a presence indicator,
+   ;; and a code fragment which produces a "compatible" list of
+   ;; arguments based on the parameter variables.
+   (loop
+      for parameter in keyword-parameter-list
+      for (parameter-var parameter-keyword default-value raw-presence-term)
+        = (multiple-value-list (parse-keyword-parameter parameter))
+      for presence-term = (or raw-presence-term (gensym))
+      for gensym = (gensym)
+      for output-code = `(when ,presence-term
+                           (list ',parameter-keyword ,parameter-var))
+      then `(let ((,gensym ,output-code))
+              (if ,presence-term
+                  (list* ',parameter-keyword ,parameter-var ,gensym)
+                  ,gensym))
+      collect `((,parameter-keyword ,parameter-var)
+                ,default-value ,presence-term) into output-parameters
+      finally (return
+                (values output-parameters output-code)))))
+
 (defmacro define-graphics-method (name internal-fun fixed-args &optional key-args allowed-options)
   (declare (ignore key-args allowed-options))
   `(defun ,name (medium ,@fixed-args &rest drawing-options)
