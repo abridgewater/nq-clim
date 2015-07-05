@@ -78,6 +78,11 @@
   (setf (slot-value medium 'drawable) nil))
 
 
+(defun find-x-color (colormap color)
+  (multiple-value-bind (red green blue) (color-rgb color)
+    (xlib:alloc-color colormap
+                      (xlib:make-color :red red :green green :blue blue))))
+
 (defun synchronize-medium (clx-medium)
   (let ((last-ink (slot-value clx-medium 'last-ink))
         (ink (medium-ink clx-medium)))
@@ -86,7 +91,9 @@
                      (every #'=
                             (multiple-value-list (color-rgb last-ink))
                             (multiple-value-list (color-rgb ink)))))
-      (setf (slot-value clx-medium 'last-ink) ink)))
+      (setf (slot-value clx-medium 'last-ink) ink)
+      (setf (xlib:gcontext-foreground (slot-value clx-medium 'gcontext))
+            (find-x-color (slot-value clx-medium 'colormap) ink))))
   
   (let ((last-background (slot-value clx-medium 'last-background))
         (background (medium-background clx-medium)))
@@ -95,7 +102,9 @@
                      (every #'=
                             (multiple-value-list (color-rgb last-background))
                             (multiple-value-list (color-rgb background)))))
-      (setf (slot-value clx-medium 'last-background) background))))
+      (setf (slot-value clx-medium 'last-background) background)
+      (setf (xlib:gcontext-background (slot-value clx-medium 'gcontext))
+            (find-x-color (slot-value clx-medium 'colormap) background)))))
 
 (defmethod medium-draw-point* ((medium clx-medium) x y)
   (synchronize-medium medium)
