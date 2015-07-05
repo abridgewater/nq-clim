@@ -65,14 +65,16 @@
       finally (return
                 (values output-parameters output-code)))))
 
-(defmacro define-graphics-method (name internal-fun fixed-args &optional key-args allowed-options)
-  (declare (ignore key-args allowed-options))
-  `(defun ,name (medium ,@fixed-args &rest drawing-options)
-     (flet ((thunk ()
-              (,internal-fun medium ,@fixed-args)))
-       (declare (dynamic-extent #'thunk))
-       (apply #'invoke-with-drawing-options
-              medium #'thunk drawing-options))))
+(defmacro define-graphics-method (name internal-fun fixed-args key-args allowed-options)
+  (declare (ignore key-args))
+  (multiple-value-bind (option-args rebuild-options)
+      (process-keyargs-for-recovery allowed-options)
+    `(defun ,name (medium ,@fixed-args &key ,@option-args)
+       (flet ((thunk ()
+                (,internal-fun medium ,@fixed-args)))
+         (declare (dynamic-extent #'thunk))
+         (apply #'invoke-with-drawing-options
+                medium #'thunk ,rebuild-options)))))
 
 
 (define-graphics-method draw-point*
