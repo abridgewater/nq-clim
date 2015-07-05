@@ -96,24 +96,16 @@
     medium-draw-lines* (coord-seq) ()
     (ink clipping-region transformation
          line-style line-thickness line-unit line-dashes line-cap-shape))
-
- ;; FIXME: The CLOSED and FILLED arguments below are supposed to be
- ;; keywords.  Or aren't supposed to be here at all in the case of
- ;; DRAW-RECTANGLES* But they aren't specified as parameters at all
- ;; for the corresponding MEDIUM- functions in the spec, nor are they
- ;; specified as medium properties...  And it turns out that some
- ;; other drawing functions that we'll need later require other
- ;; keyword arguments.
 (define-graphics-method draw-polygon*
-    medium-draw-polygon* (coord-seq closed filled) ()
+    medium-draw-polygon* (coord-seq) ((filled t) (closed t))
     (ink clipping-region transformation
          line-style line-thickness line-unit line-dashes line-joint-shape line-cap-shape))
 (define-graphics-method draw-rectangle*
-    medium-draw-rectangle* (x1 y1 x2 y2 filled) ()
+    medium-draw-rectangle* (x1 y1 x2 y2) ((filled t))
     (ink clipping-region transformation
          line-style line-thickness line-unit line-dashes line-joint-shape))
 (define-graphics-method draw-rectangles*
-    medium-draw-rectangles* (coord-seq filled) ()
+    medium-draw-rectangles* (coord-seq) ((filled t))
     (ink clipping-region transformation
          line-style line-thickness line-unit line-dashes line-joint-shape))
 

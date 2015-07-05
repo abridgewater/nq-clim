@@ -21,8 +21,8 @@
 (defgeneric medium-draw-points* (medium coord-seq))
 (defgeneric medium-draw-line* (medium x1 y1 x2 y2))
 (defgeneric medium-draw-lines* (medium coord-seq))
-(defgeneric medium-draw-polygon* (medium coord-seq closed filled))
-(defgeneric medium-draw-rectangle* (medium x1 y1 x2 y2 filled))
-(defgeneric medium-draw-rectangles* (medium coord-seq filled))
+(defgeneric medium-draw-polygon* (medium coord-seq &key filled closed))
+(defgeneric medium-draw-rectangle* (medium x1 y1 x2 y2 &key filled))
+(defgeneric medium-draw-rectangles* (medium coord-seq &key filled))
 
 ;;; EOF

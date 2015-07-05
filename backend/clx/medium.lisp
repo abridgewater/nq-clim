@@ -108,7 +108,7 @@
       medium
     (xlib:draw-segments drawable gcontext coord-seq)))
 
-(defmethod medium-draw-polygon* ((medium clx-medium) coord-seq closed filled)
+(defmethod medium-draw-polygon* ((medium clx-medium) coord-seq &key (filled t) (closed t))
   (synchronize-medium medium)
   (with-slots (drawable gcontext)
       medium
@@ -119,7 +119,7 @@
           (xlib:draw-lines drawable gcontext (append coord-seq first-point)))
         (xlib:draw-lines drawable gcontext coord-seq :fill-p filled))))
 
-(defmethod medium-draw-rectangle* ((medium clx-medium) x1 y1 x2 y2 filled)
+(defmethod medium-draw-rectangle* ((medium clx-medium) x1 y1 x2 y2 &key (filled t))
   (synchronize-medium medium)
   (with-slots (drawable gcontext)
       medium
@@ -135,7 +135,7 @@
      collect (- x2 x1)
      collect (- y2 y1)))
 
-(defmethod medium-draw-rectangles* ((medium clx-medium) coord-seq filled)
+(defmethod medium-draw-rectangles* ((medium clx-medium) coord-seq &key (filled t))
   (synchronize-medium medium)
   (with-slots (drawable gcontext)
       medium
