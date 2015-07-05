@@ -20,7 +20,8 @@
 (cl:in-package :nq-clim/medium/graphics-method)
 
 
-(defmacro define-graphics-method (name internal-fun fixed-args)
+(defmacro define-graphics-method (name internal-fun fixed-args &optional key-args allowed-options)
+  (declare (ignore key-args allowed-options))
   `(defun ,name (medium ,@fixed-args &rest drawing-options)
      (flet ((thunk ()
               (,internal-fun medium ,@fixed-args)))
