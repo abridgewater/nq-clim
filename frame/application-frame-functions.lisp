@@ -7,9 +7,12 @@
 (cl:defpackage :nq-clim/frame/application-frame-functions
   (:use :cl)
   (:export
+   "FRAME-PANES"
    "FRAME-PRETTY-NAME"))
 (cl:in-package :nq-clim/frame/application-frame-functions)
 
+(defgeneric frame-panes (frame))
+(defgeneric (setf frame-panes) (toplevel-pane frame))
 (defgeneric frame-pretty-name (frame))
 (defgeneric (setf frame-pretty-name) (name frame))
 
