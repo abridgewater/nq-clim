@@ -15,6 +15,7 @@
 
 (defclass standard-application-frame (application-frame
                                       manageable-frame-mixin)
-  ((pretty-name :initarg :pretty-name :accessor frame-pretty-name)))
+  ((pretty-name :initarg :pretty-name :accessor frame-pretty-name)
+   (toplevel-pane :initform nil :accessor frame-panes)))
 
 ;;; EOF
