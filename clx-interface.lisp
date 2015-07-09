@@ -91,6 +91,10 @@
 
   (setf (frame-top-level-sheet frame) *sheet*)
 
+  (let ((pane (frame-panes frame)))
+    (when pane
+      (sheet-adopt-child *sheet* pane)))
+
   (setf *window* (sheet-mirror *sheet*))
 
   (setf (xlib:window-background *window*)
