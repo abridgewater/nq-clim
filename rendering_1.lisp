@@ -190,19 +190,20 @@
   (init-map-data)
   (setf *position* #x11)
   (set-facing :south)
-  (with-x11-display (:space-requirement
-                     (make-space-requirement
-                      :width 256 :height 256
-                      :min-width 256 :min-height 256
-                      :max-width 256 :max-height 256)
-                     :frame (make-instance 'standard-application-frame
-                                           :pretty-name "Dungeon Crawl -- Rendering 1"))
-    (setf *medium* (nq-clim/medium/association:allocate-medium *port* *sheet*))
-    (nq-clim/medium/association:engraft-medium *medium* *port* *sheet*)
-    (setf (xlib:window-event-mask *window*)
-          (xlib:make-event-mask :button-press :button-release
-                                :exposure :key-press))
-    (run-event-loop))
+  (let ((frame (make-instance 'standard-application-frame
+                              :pretty-name "Dungeon Crawl -- Rendering 1")))
+    (with-x11-display (:space-requirement
+                       (make-space-requirement
+                        :width 256 :height 256
+                        :min-width 256 :min-height 256
+                        :max-width 256 :max-height 256)
+                       :frame frame)
+      (setf *medium* (nq-clim/medium/association:allocate-medium *port* *sheet*))
+      (nq-clim/medium/association:engraft-medium *medium* *port* *sheet*)
+      (setf (xlib:window-event-mask *window*)
+            (xlib:make-event-mask :button-press :button-release
+                                  :exposure :key-press))
+      (run-event-loop)))
   (values))
 
 ;;; EOF
