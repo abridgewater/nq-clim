@@ -13,6 +13,7 @@
 
 (defpackage :rendering-1
   (:use :common-lisp
+        :nq-clim/frame/application-frame-functions
         :nq-clim/medium/drawing
         :nq-clim/medium/graphics-method
         :nq-clim/sheet/basic-sheet
@@ -196,7 +197,9 @@
   (setf *position* #x11)
   (set-facing :south)
   (let ((frame (make-instance 'standard-application-frame
-                              :pretty-name "Dungeon Crawl -- Rendering 1")))
+                              :pretty-name "Dungeon Crawl -- Rendering 1"))
+        (pane (make-instance 'maze-pane)))
+    (setf (frame-panes frame) pane)
     (with-x11-display (:space-requirement
                        (make-space-requirement
                         :width 256 :height 256
