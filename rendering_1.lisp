@@ -15,6 +15,8 @@
   (:use :common-lisp
         :nq-clim/medium/drawing
         :nq-clim/medium/graphics-method
+        :nq-clim/sheet/basic-sheet
+        :nq-clim/sheet/sheet-with-medium-mixin
         :nq-clim/layout/space-requirement
         :nq-clim/frame/standard-application-frame
         :nq-clim/clx-interface)
@@ -62,6 +64,9 @@
 
 (defvar *medium* nil "The CLIM MEDIUM we draw on.")
 
+
+(defclass maze-pane (basic-sheet sheet-with-medium-mixin)
+  ())
 
 (defun init-map-data ()
   "Convert the raw map data in *raw-map-data* to the internal representation in *map-data*."
