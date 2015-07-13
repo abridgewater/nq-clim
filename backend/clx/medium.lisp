@@ -12,7 +12,8 @@
         :nq-clim/medium/basic-medium
         :nq-clim/medium/drawing
         :nq-clim/medium/medium-components
-        :nq-clim/sheet/mirror-functions)
+        :nq-clim/sheet/mirror-functions
+        :nq-clim/sheet/sheet-with-medium-mixin)
   (:import-from :xlib)
   (:export
    "CLX-MEDIUM"))
@@ -33,7 +34,7 @@
                  'gcontext gcontext))
 
 
-(defmethod allocate-medium ((port clx-port) sheet)
+(defmethod allocate-medium ((port clx-port) (sheet sheet-with-medium-mixin))
   (declare (optimize (debug 3)))
   (let ((window (sheet-mirror sheet)))
     (make-clx-medium
@@ -47,12 +48,12 @@
   (xlib:free-gcontext (slot-value medium 'gcontext)))
 
 
-(defmethod engraft-medium :after ((medium clx-medium) port sheet)
+(defmethod engraft-medium :after ((medium clx-medium) (port clx-port) (sheet sheet-with-medium-mixin))
   ;; FIXME: Set clipping region and transform based on SHEET's
   ;; relation to its mirror.
   (setf (slot-value medium 'drawable) (sheet-mirror sheet)))
 
-(defmethod degraft-medium :after ((medium clx-medium) port sheet)
+(defmethod degraft-medium :after ((medium clx-medium) (port clx-port) (sheet sheet-with-medium-mixin))
   (setf (slot-value medium 'drawable) nil))
 
 
