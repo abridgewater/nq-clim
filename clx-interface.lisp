@@ -21,7 +21,6 @@
   (:import-from :xlib)
   (:export
    "*PORT*"
-   "*GRAFT*"
    "WITH-X11-DISPLAY"
 
    ;; For some reason, these don't appear to be defind in CLX.
@@ -36,7 +35,6 @@
 ;;; Important external variables.
 
 (defvar *port* nil "The CLIM PORT.")
-(defvar *graft* nil "The CLIM GRAFT.")
 
 ;; For some reason, CLX doesn't appear to have these keysyms defined.
 (defconstant +xk-up+    #xff52)
@@ -68,9 +66,8 @@
                                                `(:display ,display-name)))))
   ;; KLUDGE: NOT the defined right way to obtain a graft, but it's
   ;; what we have available at the moment.
-  (setf *graft* (make-clx-graft *port*))
-
-  (let ((sheet (make-instance 'clx-frame-sheet
+  (let ((graft (make-clx-graft *port*))
+        (sheet (make-instance 'clx-frame-sheet
                               :frame frame)))
     (setf (sheet-transformation sheet) +identity-transformation+)
     (let ((width (or (and space-requirement
@@ -80,7 +77,7 @@
                            (space-requirement-height space-requirement))
                       *default-window-height*)))
       (resize-sheet sheet width height))
-    (sheet-adopt-child *graft* sheet)
+    (sheet-adopt-child graft sheet)
 
     (setf (frame-top-level-sheet frame) sheet)
 
@@ -106,7 +103,6 @@
       (xlib:map-window window))))
 
 (defun close-display ()
-  (setf *graft* nil)
   (when *port*
     (destroy-port *port*))
   (setf *port* nil))
