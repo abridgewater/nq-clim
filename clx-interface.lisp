@@ -22,7 +22,6 @@
   (:export
    "*PORT*"
    "*GRAFT*"
-   "*DISPLAY*"
    "*SHEET*"
    "WITH-X11-DISPLAY"
 
@@ -40,7 +39,6 @@
 (defvar *port* nil "The CLIM PORT.")
 (defvar *graft* nil "The CLIM GRAFT.")
 (defvar *sheet* nil "The CLIM SHEET.")
-(defvar *display* nil "The X display connection.")
 
 ;; For some reason, CLX doesn't appear to have these keysyms defined.
 (defconstant +xk-up+    #xff52)
@@ -70,7 +68,6 @@
   (setf *port*
         (find-port :server-path `(:clx ,@(when display-name
                                                `(:display ,display-name)))))
-  (setf *display* (clx-port-display *port*))
   ;; KLUDGE: NOT the defined right way to obtain a graft, but it's
   ;; what we have available at the moment.
   (setf *graft* (make-clx-graft *port*))
@@ -111,7 +108,6 @@
     (xlib:map-window window)))
 
 (defun close-display ()
-  (setf *display* nil)
   (setf *sheet* nil)
   (setf *graft* nil)
   (when *port*
