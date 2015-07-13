@@ -18,6 +18,7 @@
         :nq-clim/medium/graphics-method
         :nq-clim/port/port
         :nq-clim/sheet/basic-sheet
+        :nq-clim/sheet/mirror-functions
         :nq-clim/sheet/sheet-with-medium-mixin
         :nq-clim/layout/space-requirement
         :nq-clim/frame/standard-application-frame
@@ -209,7 +210,7 @@
                        :frame frame)
       (setf *medium* (nq-clim/medium/association:allocate-medium (port pane) pane))
       (nq-clim/medium/association:engraft-medium *medium* (port pane) pane)
-      (setf (xlib:window-event-mask *window*)
+      (setf (xlib:window-event-mask (sheet-mirror pane))
             (xlib:make-event-mask :button-press :button-release
                                   :exposure :key-press))
       (run-event-loop)))
