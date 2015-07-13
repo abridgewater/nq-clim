@@ -16,6 +16,7 @@
         :nq-clim/frame/application-frame-functions
         :nq-clim/medium/drawing
         :nq-clim/medium/graphics-method
+        :nq-clim/port/port
         :nq-clim/sheet/basic-sheet
         :nq-clim/sheet/sheet-with-medium-mixin
         :nq-clim/layout/space-requirement
@@ -206,8 +207,8 @@
                         :min-width 256 :min-height 256
                         :max-width 256 :max-height 256)
                        :frame frame)
-      (setf *medium* (nq-clim/medium/association:allocate-medium *port* *sheet*))
-      (nq-clim/medium/association:engraft-medium *medium* *port* *sheet*)
+      (setf *medium* (nq-clim/medium/association:allocate-medium (port pane) pane))
+      (nq-clim/medium/association:engraft-medium *medium* (port pane) pane)
       (setf (xlib:window-event-mask *window*)
             (xlib:make-event-mask :button-press :button-release
                                   :exposure :key-press))
