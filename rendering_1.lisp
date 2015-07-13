@@ -151,7 +151,7 @@
 
 
 (defun force-redraw (medium)
-  (draw-rectangle* *medium* 0 0 256 256 :ink nq-clim/ink/standard-color:+white+)
+  (draw-rectangle* medium 0 0 256 256 :ink nq-clim/ink/standard-color:+white+)
   (draw-maze medium))
 
 (defun handle-key-press (key-code)
