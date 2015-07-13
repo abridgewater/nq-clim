@@ -13,6 +13,7 @@
 
 (defpackage :rendering-1
   (:use :common-lisp
+        :nq-clim/backend/clx/port
         :nq-clim/frame/application-frame-functions
         :nq-clim/medium/drawing
         :nq-clim/medium/graphics-method
@@ -156,8 +157,9 @@
   (draw-rectangle* medium 0 0 256 256 :ink nq-clim/ink/standard-color:+white+)
   (draw-maze medium))
 
-(defun handle-key-press (key-code)
-  (let ((keysym (xlib:keycode->keysym *display* key-code 0)))
+(defun handle-key-press (frame key-code)
+  (let* ((display (clx-port-display (port (frame-panes frame))))
+         (keysym (xlib:keycode->keysym display key-code 0)))
     (declare (integer keysym))
     (cond
       ;; For some reason, the keysyms I need aren't defined in CLX.
@@ -174,11 +176,14 @@
 (defun convert-clx-event (&rest event-plist)
   (apply #'list event-plist))
 
-(defun read-event ()
-  (xlib:process-event *display* :handler #'convert-clx-event))
+(defun read-event (frame)
+  ;; FIXME: Ideally, we'd call PORT on the FRAME directly, but that
+  ;; requires a working frame-manager class.
+  (let ((display (clx-port-display (port (frame-panes frame)))))
+    (xlib:process-event display :handler #'convert-clx-event)))
 
-(defun handle-one-event ()
-  (let ((event (read-event)))
+(defun handle-one-event (frame)
+  (let ((event (read-event frame)))
     (case (event-type event)
       (:exposure
        (draw-maze *medium*))
@@ -186,12 +191,12 @@
        (throw '%exit-event-loop nil))
       (:key-press
        (let ((code (getf event :code)))
-         (handle-key-press code))))))
+         (handle-key-press frame code))))))
 
-(defun run-event-loop ()
+(defun run-event-loop (frame)
   (catch '%exit-event-loop
     (loop
-       (handle-one-event))))
+       (handle-one-event frame))))
 
 (defun start-example ()
   "run the example renderer, connecting to an X display on HOST."
@@ -213,7 +218,7 @@
       (setf (xlib:window-event-mask (sheet-mirror pane))
             (xlib:make-event-mask :button-press :button-release
                                   :exposure :key-press))
-      (run-event-loop)))
+      (run-event-loop frame)))
   (values))
 
 ;;; EOF
