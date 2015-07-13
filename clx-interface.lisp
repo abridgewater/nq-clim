@@ -20,7 +20,6 @@
         :nq-clim/backend/clx/frame-sheet)
   (:import-from :xlib)
   (:export
-   "*PORT*"
    "WITH-X11-DISPLAY"
 
    ;; For some reason, these don't appear to be defind in CLX.
