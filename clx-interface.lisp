@@ -22,7 +22,6 @@
   (:export
    "*PORT*"
    "*GRAFT*"
-   "*SHEET*"
    "WITH-X11-DISPLAY"
 
    ;; For some reason, these don't appear to be defind in CLX.
@@ -38,7 +37,6 @@
 
 (defvar *port* nil "The CLIM PORT.")
 (defvar *graft* nil "The CLIM GRAFT.")
-(defvar *sheet* nil "The CLIM SHEET.")
 
 ;; For some reason, CLX doesn't appear to have these keysyms defined.
 (defconstant +xk-up+    #xff52)
@@ -72,43 +70,42 @@
   ;; what we have available at the moment.
   (setf *graft* (make-clx-graft *port*))
 
-  (setf *sheet* (make-instance 'clx-frame-sheet
-                               :frame frame))
-  (setf (sheet-transformation *sheet*) +identity-transformation+)
-  (let ((width (or (and space-requirement
-                        (space-requirement-width space-requirement))
-                   *default-window-width*))
-        (height (or (and space-requirement
-                         (space-requirement-height space-requirement))
-                    *default-window-height*)))
-    (resize-sheet *sheet* width height))
-  (sheet-adopt-child *graft* *sheet*)
+  (let ((sheet (make-instance 'clx-frame-sheet
+                              :frame frame)))
+    (setf (sheet-transformation sheet) +identity-transformation+)
+    (let ((width (or (and space-requirement
+                          (space-requirement-width space-requirement))
+                     *default-window-width*))
+          (height (or (and space-requirement
+                           (space-requirement-height space-requirement))
+                      *default-window-height*)))
+      (resize-sheet sheet width height))
+    (sheet-adopt-child *graft* sheet)
 
-  (setf (frame-top-level-sheet frame) *sheet*)
+    (setf (frame-top-level-sheet frame) sheet)
 
-  (let ((pane (frame-panes frame)))
-    (when pane
-      (sheet-adopt-child *sheet* pane)))
+    (let ((pane (frame-panes frame)))
+      (when pane
+        (sheet-adopt-child sheet pane)))
 
-  (let ((window (sheet-mirror *sheet*)))
+    (let ((window (sheet-mirror sheet)))
 
-    (setf (xlib:window-background window)
-          (xlib:screen-white-pixel
-           (xlib:display-default-screen
-            (clx-port-display *port*))))
+      (setf (xlib:window-background window)
+            (xlib:screen-white-pixel
+             (xlib:display-default-screen
+              (clx-port-display *port*))))
 
-    (setf (xlib:window-event-mask window)
-          (xlib:make-event-mask :exposure))
+      (setf (xlib:window-event-mask window)
+            (xlib:make-event-mask :exposure))
 
-    (setf (xlib:wm-name window)
-          (or (and frame (frame-pretty-name frame)) *default-window-title*))
+      (setf (xlib:wm-name window)
+            (or (and frame (frame-pretty-name frame)) *default-window-title*))
 
-    (when space-requirement
-      (set-window-space-requirement window space-requirement))
-    (xlib:map-window window)))
+      (when space-requirement
+        (set-window-space-requirement window space-requirement))
+      (xlib:map-window window))))
 
 (defun close-display ()
-  (setf *sheet* nil)
   (setf *graft* nil)
   (when *port*
     (destroy-port *port*))
