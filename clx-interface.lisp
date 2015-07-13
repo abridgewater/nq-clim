@@ -24,7 +24,6 @@
    "*GRAFT*"
    "*DISPLAY*"
    "*SHEET*"
-   "*WINDOW*"
    "WITH-X11-DISPLAY"
 
    ;; For some reason, these don't appear to be defind in CLX.
@@ -42,7 +41,6 @@
 (defvar *graft* nil "The CLIM GRAFT.")
 (defvar *sheet* nil "The CLIM SHEET.")
 (defvar *display* nil "The X display connection.")
-(defvar *window* nil "The X window we draw in.")
 
 ;; For some reason, CLX doesn't appear to have these keysyms defined.
 (defconstant +xk-up+    #xff52)
@@ -95,27 +93,24 @@
     (when pane
       (sheet-adopt-child *sheet* pane)))
 
-  (setf *window* (sheet-mirror *sheet*))
+  (let ((window (sheet-mirror *sheet*)))
 
-  (setf (xlib:window-background *window*)
-        (xlib:screen-white-pixel
-         (xlib:display-default-screen
-          (clx-port-display *port*))))
+    (setf (xlib:window-background window)
+          (xlib:screen-white-pixel
+           (xlib:display-default-screen
+            (clx-port-display *port*))))
 
-  (setf (xlib:window-event-mask *window*)
-        (xlib:make-event-mask :exposure))
+    (setf (xlib:window-event-mask window)
+          (xlib:make-event-mask :exposure))
 
-  (setf (xlib:wm-name *window*)
-        (or (and frame (frame-pretty-name frame)) *default-window-title*))
+    (setf (xlib:wm-name window)
+          (or (and frame (frame-pretty-name frame)) *default-window-title*))
 
-  (when space-requirement
-    (set-window-space-requirement *window* space-requirement))
-  (xlib:map-window *window*))
+    (when space-requirement
+      (set-window-space-requirement window space-requirement))
+    (xlib:map-window window)))
 
 (defun close-display ()
-  ;; It is sufficient to drop the reference to *window*, as closing
-  ;; the display automatically releases all server resources.
-  (setf *window* nil)
   (setf *display* nil)
   (setf *sheet* nil)
   (setf *graft* nil)
