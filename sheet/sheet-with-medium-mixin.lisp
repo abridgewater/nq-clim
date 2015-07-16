@@ -8,13 +8,14 @@
   (:use :cl
         :nq-clim/medium/association
         :nq-clim/medium/medium
-        :nq-clim/port/port)
+        :nq-clim/port/port
+        :nq-clim/sheet/sheet)
   (:export
    "SHEET-WITH-MEDIUM-MIXIN"))
 (cl:in-package :nq-clim/sheet/sheet-with-medium-mixin)
 
 
-(defclass sheet-with-medium-mixin ()
+(defclass sheet-with-medium-mixin (sheet)
   ((medium :reader sheet-medium :initform nil)))
 
 
