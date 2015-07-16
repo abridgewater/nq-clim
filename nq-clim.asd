@@ -8,7 +8,7 @@
                              :nq-clim/backend/clx/mirror
                              :nq-clim/medium/drawing
                              :nq-clim/medium/graphics-method
-                             :nq-clim/sheet/sheet-with-medium-mixin
+                             :nq-clim/sheet/permanent-medium-sheet-output-mixin
                              :nq-clim/frame/standard-application-frame))
 
 (register-system-packages :clx '(:xlib))
