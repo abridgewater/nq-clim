@@ -19,10 +19,10 @@
   ((medium :reader sheet-medium :initform nil)))
 
 
-(defmethod engraft-medium ((medium medium) (port port) (sheet sheet-with-medium-mixin))
+(defmethod engraft-medium :after ((medium medium) (port port) (sheet sheet-with-medium-mixin))
   (setf (slot-value sheet 'medium) medium))
 
-(defmethod degraft-medium ((medium medium) (port port) (sheet sheet-with-medium-mixin))
+(defmethod degraft-medium :after ((medium medium) (port port) (sheet sheet-with-medium-mixin))
   (setf (slot-value sheet 'medium) nil))
 
 
