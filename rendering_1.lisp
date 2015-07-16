@@ -15,12 +15,13 @@
   (:use :common-lisp
         :nq-clim/backend/clx/port
         :nq-clim/frame/application-frame-functions
+        :nq-clim/medium/association
         :nq-clim/medium/drawing
         :nq-clim/medium/graphics-method
         :nq-clim/port/port
         :nq-clim/sheet/basic-sheet
         :nq-clim/sheet/mirror-functions
-        :nq-clim/sheet/sheet-with-medium-mixin
+        :nq-clim/sheet/permanent-medium-sheet-output-mixin
         :nq-clim/layout/space-requirement
         :nq-clim/frame/standard-application-frame
         :nq-clim/clx-interface)
@@ -69,7 +70,7 @@
 (defvar *medium* nil "The CLIM MEDIUM we draw on.")
 
 
-(defclass maze-pane (basic-sheet sheet-with-medium-mixin)
+(defclass maze-pane (basic-sheet permanent-medium-sheet-output-mixin)
   ())
 
 (defun init-map-data ()
@@ -213,8 +214,7 @@
                         :min-width 256 :min-height 256
                         :max-width 256 :max-height 256)
                        :frame frame)
-      (setf *medium* (nq-clim/medium/association:allocate-medium (port pane) pane))
-      (nq-clim/medium/association:engraft-medium *medium* (port pane) pane)
+      (setf *medium* (sheet-medium pane))
       (setf (xlib:window-event-mask (sheet-mirror pane))
             (xlib:make-event-mask :button-press :button-release
                                   :exposure :key-press))
