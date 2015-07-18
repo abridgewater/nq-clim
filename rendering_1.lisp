@@ -175,7 +175,10 @@
   (getf event :event-key))
 
 (defun convert-clx-event (&rest event-plist)
-  (apply #'list event-plist))
+  (let ((type (getf event-plist :event-key)))
+    (case type
+      (otherwise
+       (apply #'list event-plist)))))
 
 (defun read-event (frame)
   ;; FIXME: Ideally, we'd call PORT on the FRAME directly, but that
