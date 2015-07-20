@@ -8,6 +8,7 @@
   (:use :cl
         :nq-clim/backend/clx/port
         :nq-clim/ink/color
+        :nq-clim/ink/indirect-ink
         :nq-clim/medium/association
         :nq-clim/medium/basic-medium
         :nq-clim/medium/drawing
@@ -62,9 +63,18 @@
     (xlib:alloc-color colormap
                       (xlib:make-color :red red :green green :blue blue))))
 
+(defun resolve-ink (clx-medium ink)
+  (cond
+    ((eq ink +foreground-ink+)
+     (resolve-ink clx-medium (medium-foreground clx-medium)))
+    ((eq ink +background-ink+)
+     (resolve-ink clx-medium (medium-background clx-medium)))
+    (t
+     ink)))
+
 (defun synchronize-medium (clx-medium)
   (let ((last-ink (slot-value clx-medium 'last-ink))
-        (ink (medium-ink clx-medium)))
+        (ink (resolve-ink clx-medium (medium-ink clx-medium))))
     (unless (and last-ink
                  (or (eq last-ink ink)
                      (every #'=
@@ -75,7 +85,7 @@
             (find-x-color (slot-value clx-medium 'colormap) ink))))
   
   (let ((last-background (slot-value clx-medium 'last-background))
-        (background (medium-background clx-medium)))
+        (background (resolve-ink clx-medium (medium-background clx-medium))))
     (unless (and last-background
                  (or (eq last-background background)
                      (every #'=
