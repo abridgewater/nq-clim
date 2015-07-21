@@ -6,6 +6,7 @@
 
 (cl:defpackage :nq-clim/medium/basic-medium
   (:use :cl
+        :nq-clim/ink/indirect-ink
         :nq-clim/ink/standard-color
         :nq-clim/medium/association
         :nq-clim/medium/medium-components
@@ -22,7 +23,7 @@
   ((sheet :initform nil :reader medium-sheet)
    (foreground :initform +black+ :accessor medium-foreground)
    (background :initform +white+ :accessor medium-background)
-   (ink :initform +black+ :accessor medium-ink)))
+   (ink :initform +foreground-ink+ :accessor medium-ink)))
 
 
 (defmethod engraft-medium ((medium basic-medium) port sheet)
