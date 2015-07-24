@@ -16,7 +16,7 @@
 (defclass standard-line-style (line-style)
   ((unit :initarg unit :reader line-style-unit)
    (thickness :initarg thickness :reader line-style-thickness)
-   (join-shape :initarg joint-shape :reader line-style-joint-shape)
+   (joint-shape :initarg joint-shape :reader line-style-joint-shape)
    (cap-shape :initarg cap-shape :reader line-style-cap-shape)
    (dashes :initarg dashes :reader line-style-dashes)))
 
