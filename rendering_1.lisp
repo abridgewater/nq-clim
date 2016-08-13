@@ -180,14 +180,16 @@
       (otherwise
        (apply #'list event-plist)))))
 
-(defun read-event (frame)
-  ;; FIXME: Ideally, we'd call PORT on the FRAME directly, but that
-  ;; requires a working frame-manager class.
-  (let ((display (clx-port-display (port (frame-panes frame)))))
+(defun read-event (pane)
+  (let ((display (clx-port-display (port pane))))
     (xlib:process-event display :handler #'convert-clx-event)))
 
+(defun get-one-event (frame)
+  (read-event (frame-panes frame)))
+
 (defun handle-one-event (frame)
-  (let ((event (read-event frame)))
+  (let ((event (get-one-event frame)))
+    (print event) (finish-output)
     (case (event-type event)
       (:exposure
        (draw-maze *medium*))
