@@ -9,6 +9,7 @@
         :nq-clim/backend/clx/port
         :nq-clim/sheet/mirror-functions
         :nq-clim/geometry/bounding-rectangle-protocol
+        :nq-clim/sheet/sheet
         :nq-clim/sheet/sheet-hierarchy-protocol)
   (:import-from :xlib))
 (cl:in-package :nq-clim/backend/clx/mirror)
@@ -23,6 +24,11 @@
                           :y min-y
                           :width (- max-x min-x)
                           :height (- max-y min-y)))))
+
+(defmethod realize-mirror :around ((port clx-port) mirrored-sheet)
+  (let ((mirror (call-next-method)))
+    (setf (getf (xlib:window-plist mirror) 'sheet) mirrored-sheet)
+    mirror))
 
 (defmethod destroy-mirror ((port clx-port) mirrored-sheet)
   (let ((mirror (sheet-direct-mirror mirrored-sheet)))
