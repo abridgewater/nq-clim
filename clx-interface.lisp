@@ -6,6 +6,7 @@
 
 (cl:defpackage :nq-clim/clx-interface
   (:use :cl
+        :nq-clim/event/event-queue
         :nq-clim/frame/application-frame-functions
         :nq-clim/frame/manageable-frame-functions
         :nq-clim/layout/space-requirement
@@ -65,9 +66,11 @@
                                                `(:display ,display-name)))))
   ;; KLUDGE: NOT the defined right way to obtain a graft, but it's
   ;; what we have available at the moment.
-  (let ((graft (make-clx-graft *port*))
-        (sheet (make-instance 'clx-frame-sheet
-                              :frame frame)))
+  (let* ((graft (make-clx-graft *port*))
+         (event-queue (make-event-queue))
+         (sheet (make-instance 'clx-frame-sheet
+                               :frame frame
+                               :event-queue event-queue)))
     (setf (sheet-transformation sheet) +identity-transformation+)
     (let ((width (or (and space-requirement
                           (space-requirement-width space-requirement))
