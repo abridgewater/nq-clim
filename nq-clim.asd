@@ -6,6 +6,7 @@
                 :depends-on (:nq-clim/clx-interface
                              :nq-clim/backend/clx/medium
                              :nq-clim/backend/clx/mirror
+                             :nq-clim/backend/clx/event-handling
                              :nq-clim/medium/drawing
                              :nq-clim/medium/graphics-method
                              :nq-clim/sheet/permanent-medium-sheet-output-mixin
