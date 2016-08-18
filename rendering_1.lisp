@@ -14,14 +14,17 @@
 (defpackage :rendering-1
   (:use :common-lisp
         :nq-clim/backend/clx/port
+        :nq-clim/event/event-queue-protocol
         :nq-clim/frame/application-frame-functions
         :nq-clim/medium/association
         :nq-clim/medium/drawing
         :nq-clim/medium/graphics-method
+        :nq-clim/port/event-handling-protocol
         :nq-clim/port/port
         :nq-clim/sheet/basic-sheet
         :nq-clim/sheet/mirror-functions
         :nq-clim/sheet/permanent-medium-sheet-output-mixin
+        :nq-clim/sheet/standard-sheet-input-mixin
         :nq-clim/layout/space-requirement
         :nq-clim/frame/standard-application-frame
         :nq-clim/clx-interface)
@@ -70,7 +73,7 @@
 (defvar *medium* nil "The CLIM MEDIUM we draw on.")
 
 
-(defclass maze-pane (basic-sheet permanent-medium-sheet-output-mixin)
+(defclass maze-pane (basic-sheet permanent-medium-sheet-output-mixin standard-sheet-input-mixin)
   ())
 
 (defun init-map-data ()
@@ -174,18 +177,15 @@
   "Compatibility shim for CLX event plists"
   (getf event :event-key))
 
-(defun convert-clx-event (&rest event-plist)
-  (let ((type (getf event-plist :event-key)))
-    (case type
-      (otherwise
-       (apply #'list event-plist)))))
-
-(defun read-event (pane)
-  (let ((display (clx-port-display (port pane))))
-    (xlib:process-event display :handler #'convert-clx-event)))
-
 (defun get-one-event (frame)
-  (read-event (frame-panes frame)))
+  (let ((client (frame-panes frame)))
+    (loop
+       for event = (event-read-no-hang client)
+       until event
+       do (process-next-event (port client)
+                              :wait-function (lambda ()
+                                               (event-listen client)))
+       finally (return event))))
 
 (defun handle-one-event (frame)
   (let ((event (get-one-event frame)))
